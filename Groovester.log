@@ -1,0 +1,72 @@
+2024-07-03 22:08:31;DEBUG;Attempting to start Groovester!
+2024-07-03 22:08:31;DEBUG;Using selector: EpollSelector
+2024-07-03 22:08:31;INFO;logging in using static token
+2024-07-03 22:08:32;INFO;Shard ID None has connected to Gateway (Session ID: 683212105cbdf7a65a02ff854e543df1).
+2024-07-03 22:08:34;INFO;Groovester started Successfully!
+2024-07-03 22:08:47;DEBUG;Message from camsterrrr: !help
+2024-07-03 22:08:47;DEBUG;Message from Groovesterrrr#0306: Usage: '!play *YouTube URL*':	Groovester will download YouTube video and play it in a voice channel!
+2024-07-03 22:17:06;DEBUG;Message from camsterrrr: !play
+2024-07-03 22:17:06;ERROR;Ignoring exception in on_message
+Traceback (most recent call last):
+  File "/home/jbone/.local/lib/python3.10/site-packages/discord/client.py", line 449, in _run_event
+    await coro(*args, **kwargs)
+  File "/home/jbone/onedrive/projects/Groovester/src/Groovester.py", line 152, in on_message
+    await message.channel.send(_helpPlayCommand)
+TypeError: 'Message' object is not subscriptable
+2024-07-03 22:17:46;DEBUG;Message from camsterrrr: !help
+2024-07-03 22:17:47;DEBUG;Message from Groovesterrrr#0306: Usage: '!play *YouTube URL*':	Groovester will download YouTube video and play it in a voice channel!
+2024-07-03 22:19:43;DEBUG;Message from camsterrrr: !play
+2024-07-03 22:19:43;ERROR;Ignoring exception in on_message
+Traceback (most recent call last):
+  File "/home/jbone/.local/lib/python3.10/site-packages/discord/client.py", line 449, in _run_event
+    await coro(*args, **kwargs)
+  File "/home/jbone/onedrive/projects/Groovester/src/Groovester.py", line 152, in on_message
+    #! Todo: Find API that can test if the URL is valid.
+TypeError: 'Message' object is not subscriptable
+2024-07-03 22:21:10;DEBUG;Message from camsterrrr: !play
+2024-07-03 22:21:10;ERROR;Ignoring exception in on_message
+Traceback (most recent call last):
+  File "/home/jbone/.local/lib/python3.10/site-packages/discord/client.py", line 449, in _run_event
+    await coro(*args, **kwargs)
+  File "/home/jbone/onedrive/projects/Groovester/src/Groovester.py", line 152, in on_message
+    #! Todo: Find API that can test if the URL is valid.
+TypeError: 'Message' object is not subscriptable
+2024-07-03 22:21:41;DEBUG;Message from camsterrrr: !play
+2024-07-03 22:21:41;ERROR;Ignoring exception in on_message
+Traceback (most recent call last):
+  File "/home/jbone/.local/lib/python3.10/site-packages/discord/client.py", line 449, in _run_event
+    await coro(*args, **kwargs)
+  File "/home/jbone/onedrive/projects/Groovester/src/Groovester.py", line 152, in on_message
+    #! Todo: Find API that can test if the URL is valid.
+TypeError: 'Message' object is not subscriptable
+2024-07-03 22:21:53;DEBUG;Message from camsterrrr: !play domain
+2024-07-03 22:21:53;ERROR;Ignoring exception in on_message
+Traceback (most recent call last):
+  File "/home/jbone/.local/lib/python3.10/site-packages/discord/client.py", line 449, in _run_event
+    await coro(*args, **kwargs)
+  File "/home/jbone/onedrive/projects/Groovester/src/Groovester.py", line 152, in on_message
+    #! Todo: Find API that can test if the URL is valid.
+TypeError: 'Message' object is not subscriptable
+2024-07-03 22:28:23;DEBUG;Attempting to start Groovester!
+2024-07-03 22:28:23;DEBUG;Using selector: EpollSelector
+2024-07-03 22:28:23;INFO;logging in using static token
+2024-07-03 22:28:25;INFO;Shard ID None has connected to Gateway (Session ID: 203c205e7db5eae7b40502189c06210c).
+2024-07-03 22:28:27;INFO;Groovester started Successfully!
+2024-07-03 22:28:36;DEBUG;Message received from camsterrrr: !play
+2024-07-03 22:28:36;DEBUG;Message received from Groovesterrrr#0306: Incorrect !play usage!
+Usage:	 !play *URL to YouTube video*
+2024-07-03 22:30:02;DEBUG;Message received from camsterrrr: !play
+2024-07-03 22:30:02;DEBUG;Message received from Groovesterrrr#0306: Incorrect !play usage!
+Usage:	 !play *URL to YouTube video*
+2024-07-03 22:30:13;DEBUG;Message received from camsterrrr: !play adsf
+2024-07-03 22:30:49;DEBUG;Message received from camsterrrr: !play asdfasdf
+2024-07-03 22:30:57;DEBUG;Message received from camsterrrr: !help
+2024-07-03 22:30:58;DEBUG;Message received from Groovesterrrr#0306: !play usage:	 !play *URL to YouTube URL*
+	Groovester will download YouTube video and play it in a voice channel!
+2024-07-03 22:31:43;DEBUG;Message received from camsterrrr: !play asdfasdfasdf
+2024-07-03 22:31:55;DEBUG;Attempting to start Groovester!
+2024-07-03 22:31:55;DEBUG;Using selector: EpollSelector
+2024-07-03 22:31:55;INFO;logging in using static token
+2024-07-03 22:31:56;INFO;Shard ID None has connected to Gateway (Session ID: aeee06d11bff4c6754d53cb7876c0150).
+2024-07-03 22:31:58;INFO;Groovester started Successfully!
+2024-07-03 22:32:17;DEBUG;Message received from camsterrrr: !play asdfasdfasdf
