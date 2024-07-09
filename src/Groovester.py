@@ -38,9 +38,13 @@ _helpPlayCommand = (
 )
 
 # Error messages
+_joinCommandNoActiveVoiceChannel = (
+    "Incorrect !join usage...\n"
+    + "\tYou are not currently in a voice channel."
+)
 _playCommandIncorrectDomain = (
     "Incorrect !play usage...\n"
-    + "\t Please enter a valid domain."
+    + "\tPlease enter a valid domain."
 )
 _playCommandIncorrectParameters = (
     "Incorrect !play usage...\n"
@@ -157,11 +161,14 @@ async def on_message(message) : # Message procedure
 
         # Isolate URL parameter from command.
         linkToYouTubeVideo = str(message.content)
-        if len(message.content) > 5 # Ensure format of "!play " (emphasis on ' '), not "!play-" or "!play#"
-            and linkToYouTubeVideo[5] == " " : 
+
+        # Ensure format of "!play " (emphasis on ' '), not "!play-" or "!play#"
+        if (len(message.content) > 5 
+            and linkToYouTubeVideo[5] == " ") : 
             linkToYouTubeVideo = message.content.split(" ")[1]
         # Else, error handle incorrect URL.
-        #* How do I make it so I don't rewrite this seciton over and over. Maybe use GOTO?
+
+        #* Todo: How do I make it so I don't rewrite this seciton over and over. Maybe use GOTO?
         else :
             await message.channel.send(_playCommandIncorrectParameters)
             return False
@@ -181,9 +188,9 @@ async def on_message(message) : # Message procedure
         ytObj = ytObj.streams.get_highest_resolution()
         try :
             ytObj.download()
-            log.debug("Successfully downloaded: " + linkToYouTubeVideo)
+            log.debug("!play successfully downloaded: " + linkToYouTubeVideo)
         except :
-            log.error("An error has occurred with downloading the YouTube video")
+            log.error("!play failed, an error has occurred with downloading the YouTube video")
 
             return False
 
@@ -199,7 +206,7 @@ async def on_message(message) : # Message procedure
 
             # Enter mutual exclusion and add song to queue.
             absPathToYtAudio = (
-                absPathGroovester + ytObj.titlea
+                absPathGroovester + ytObj.title
             )
             listOfDownloadedSongsToPlay.append[absPathToYtAudio]
             log.debug("Adding YouTube video URL to queue: " + absPathToYtAudio)
@@ -209,6 +216,33 @@ async def on_message(message) : # Message procedure
             with readerCv :
                 readerCv.signal()
             writerCv.signal() 
+
+    #* Todo: !clear, which clears the queue and deletes any downloaded videos.
+    #* Todo: !pause, which pauses the audio the bot is playing.
+    #* Todo: !next, skips to the next song and deletes the current song being played.
+    #* Todo: !queue, list the items stored in queue.
+
+    #* Todo: !join, bot will join the voice channel that the user is connect to.
+    elif message.content == "!join" :
+        # Validate author is in a voice channel
+        if message.author.voice :
+            try :
+                print("before")
+                await message.author.voice.channel.connect() #* Todo: This doesn't seem to do anything...
+                print("after") #* Todo: The thread never reaches this point...
+                log.debug("!join successfully joined the bot to the voice channel.") #* Todo: Add VC's name to the message.
+            except Exception as err :
+                log.error(err)
+
+                return False
+        else :
+            log.error("!join failed, author is not in a voice channel.")
+            await message.channel.send(_joinCommandNoActiveVoiceChannel)
+
+            return False
+
+        # Send a list of useful commands to the text channel.
+        await message.channel.send(_helpPlayCommand)
 
     return True
 
