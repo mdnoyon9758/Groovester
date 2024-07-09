@@ -31,6 +31,8 @@ _writerLock = Lock() # Used when commands like "!play" are issued.
 readerCv = Condition(lock=_readerLock)
 writerCv = Condition(lock=_writerLock)
 
+voiceClientInst = None
+
 # Help messages.
 _helpPlayCommand = (
     "!play usage:\t !play *URL to YouTube URL*\n"
@@ -41,6 +43,10 @@ _helpPlayCommand = (
 _joinCommandNoActiveVoiceChannel = (
     "Incorrect !join usage...\n"
     + "\tYou are not currently in a voice channel."
+)
+_leaveCommandNoActiveVoiceChannel = (
+    "Incorrect !leave usage...\n"
+    + "\tGroovester is not actively connected to a voice channel."
 )
 _playCommandIncorrectDomain = (
     "Incorrect !play usage...\n"
@@ -141,11 +147,11 @@ async def on_ready() :
 
 @client.event
 async def on_message(message) : # Message procedure
-    global listOfDownloadedSongsToPlay, numReaders, numWriters
+    global listOfDownloadedSongsToPlay, numReaders, numWriters, voiceClientInst
 
     # prevent bot from responding to itself
     if message.author == client.user :
-        pass
+        return True
 
     log.debug(
         f"Message received from {message.author}: {message.content}"
@@ -222,15 +228,14 @@ async def on_message(message) : # Message procedure
     #* Todo: !next, skips to the next song and deletes the current song being played.
     #* Todo: !queue, list the items stored in queue.
 
-    #* Todo: !join, bot will join the voice channel that the user is connect to.
+    # !join, bot will join the voice channel that the user is connect to.
     elif message.content == "!join" :
         # Validate author is in a voice channel
         if message.author.voice :
             try :
-                print("before")
-                await message.author.voice.channel.connect() #* Todo: This doesn't seem to do anything...
-                print("after") #* Todo: The thread never reaches this point...
-                log.debug("!join successfully joined the bot to the voice channel.") #* Todo: Add VC's name to the message.
+                channel = message.author.voice.channel
+                voiceClientInst = await channel.connect() 
+                log.debug(f"!join successfully connected to the voice channel: {channel.name} (ID: {channel.id})")
             except Exception as err :
                 log.error(err)
 
@@ -241,8 +246,30 @@ async def on_message(message) : # Message procedure
 
             return False
 
-        # Send a list of useful commands to the text channel.
-        await message.channel.send(_helpPlayCommand)
+        #* Todo: Send a list of useful commands to the text channel.
+        await message.channel.send("!join successfully completed, here are some useful commands to get you started: ")
+
+    # !join, Groovester will leave the voice channel it is currently in.
+    elif message.content == "!leave" :
+        # Validate Groovester is in a voice channel
+        if not voiceClientInst == None :
+            if voiceClientInst.is_connected() :
+                try :
+                    channel = message.author.voice.channel
+                    voiceClientInst = await voiceClientInst.disconnect() 
+                    log.debug(f"!leave successfully disconnected from the voice channel: {channel.name} (ID: {channel.id})")
+                except Exception as err :
+                    log.error(err)
+
+                    return False
+        else :
+            log.error("!leave failed, Groovester is not in a voice channel.")
+            await message.channel.send(_leaveCommandNoActiveVoiceChannel)
+
+            return False
+
+        await message.channel.send("Bye, bye! :(")
+        #* Todo: print the number of songs still in queue.
 
     return True
 
@@ -252,7 +279,7 @@ if __name__ == "__main__" :
     log.basicConfig(
         datefmt="%Y-%m-%d %H:%M:%S", 
         filename='Groovester.log', 
-        format='%(asctime)s;%(levelname)s;%(message)s', 
+        format='%(levelname)s;%(asctime)s;%(message)s', 
         level=log.DEBUG
     )
 

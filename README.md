@@ -18,7 +18,7 @@ apt install python3
 You can install all of the Python modules via the Python package manager.
 
 ```bash
-pip install --upgrade Discord.py pytube python-dotenv validators
+pip install --upgrade Discord.py pytube python-dotenv validators pynacl
 ```
 
 ### Step 1: Cloning
@@ -42,7 +42,7 @@ Groovester
 |———————— .env
 |———————— .git
 |———————— src
-|			|———————— Groovester.py
+|        |———————— Groovester.py
 |———————— test
 |————————README.md
 ```
@@ -96,9 +96,9 @@ Groovester should reply with the following message:
 
 ### Step 5: Troubleshooting
 
-Groovester's source code will log messages to the `Groovester.log` file located withing the Groovester directory. Any debug, info, and error messages will be written there. 
+Groovester's source code defines log messages will be stored in the `Groovester.log` file located withing the Groovester directory. Any debug, info, and error messages will be written there. This application has exception handling where needed, so any error messages should be properly handled.
 
-Alternatively, you can view log messages by reattaching to the screen session. See instructions listed in Step 3.
+Alternatively, you can view log messages by created by Discord.py by reattaching to the screen session. See instructions listed in Step 3.
 
 ### Step 6: Open-Source!
 
@@ -111,6 +111,12 @@ This is an open-source project after all! If you want to contribute a feature, o
 ### Multi-Threaded Features
 
 ### Temporary Data
+
+## Notes
+
+In this section, I'll list some seemingly random notes. This is more or less for my own recolection, if I ever need to revisit these issues.
+
+- I had some issues with joining the bot to a voice channel. I had properly implemented the `!join` command and verified the application's permissions within my server, but the issues came down to my Ubuntu instance not having the PyNaCl package installed. After installing, the bot joined the voice channel without issues.
 
 ## Contributors
 

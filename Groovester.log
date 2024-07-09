@@ -165,3 +165,167 @@ discord.errors.ConnectionClosed: Shard ID None WebSocket closed with 1000
 2024-07-08 19:04:18;INFO;Shard ID None has connected to Gateway (Session ID: e4915af7f7d0cf049139057de36fe6a2).
 2024-07-08 19:04:20;INFO;Groovester started Successfully!
 2024-07-09 02:22:38;INFO;Shard ID None has successfully RESUMED session e4915af7f7d0cf049139057de36fe6a2.
+2024-07-09 04:14:41;INFO;Shard ID None has successfully RESUMED session e4915af7f7d0cf049139057de36fe6a2.
+2024-07-09 04:20:59;ERROR;Attempting a reconnect in 0.84s
+Traceback (most recent call last):
+  File "/home/jbone/.local/lib/python3.10/site-packages/discord/client.py", line 667, in connect
+    await self.ws.poll_event()
+  File "/home/jbone/.local/lib/python3.10/site-packages/discord/gateway.py", line 648, in poll_event
+    raise ConnectionClosed(self.socket, shard_id=self.shard_id, code=code) from None
+discord.errors.ConnectionClosed: Shard ID None WebSocket closed with 1000
+2024-07-09 04:21:00;INFO;Shard ID None session has been invalidated.
+2024-07-09 04:21:06;INFO;Shard ID None has connected to Gateway (Session ID: bcf19ea0235e594ec2cc2b809b04e1e4).
+2024-07-09 04:21:08;INFO;Groovester started Successfully!
+2024-07-09 04:27:13;DEBUG;Attempting to start Groovester!
+2024-07-09 04:27:13;DEBUG;Using selector: EpollSelector
+2024-07-09 04:27:13;INFO;logging in using static token
+2024-07-09 04:27:14;INFO;Shard ID None has connected to Gateway (Session ID: f105a9969e7027da0c2ed15064b61b99).
+2024-07-09 04:27:16;INFO;Groovester started Successfully!
+2024-07-09 04:27:31;DEBUG;Message received from camsterrrr: !join
+2024-07-09 04:27:31;ERROR;!join failed, author is not in a voice channel.
+2024-07-09 04:27:31;DEBUG;Message received from camsterrrr: !join
+2024-07-09 04:27:31;ERROR;!join failed, author is not in a voice channel.
+2024-07-09 04:27:31;DEBUG;Message received from Groovesterrrr#0306: Incorrect !join usage...
+	You are not currently in a voice channel.
+2024-07-09 04:27:31;DEBUG;Message received from Groovesterrrr#0306: Incorrect !join usage...
+	You are not currently in a voice channel.
+2024-07-09 04:27:31;DEBUG;Message received from Groovesterrrr#0306: Incorrect !join usage...
+	You are not currently in a voice channel.
+2024-07-09 04:27:31;DEBUG;Message received from Groovesterrrr#0306: Incorrect !join usage...
+	You are not currently in a voice channel.
+2024-07-09 04:27:51;DEBUG;Message received from camsterrrr: !join
+2024-07-09 04:27:51;ERROR;PyNaCl library needed in order to use voice
+2024-07-09 04:27:51;DEBUG;Message received from camsterrrr: !join
+2024-07-09 04:27:51;ERROR;PyNaCl library needed in order to use voice
+2024-07-09 04:30:02;DEBUG;Attempting to start Groovester!
+2024-07-09 04:30:02;DEBUG;Using selector: EpollSelector
+2024-07-09 04:30:02;INFO;logging in using static token
+2024-07-09 04:30:02;INFO;Shard ID None has connected to Gateway (Session ID: f8831b46150e593633a7771a8f5b9365).
+2024-07-09 04:30:04;INFO;Groovester started Successfully!
+2024-07-09 04:40:25;DEBUG;Message received from camsterrrr: !help
+2024-07-09 04:40:25;DEBUG;Message received from Groovesterrrr#0306: !play usage:	 !play *URL to YouTube URL*
+	Groovester will download YouTube video and play it in a voice channel!
+2024-07-09 04:40:25;DEBUG;Message received from Groovesterrrr#0306: Incorrect !play usage...
+	Please enter a valid domain.
+2024-07-09 04:40:29;DEBUG;Message received from camsterrrr: !join
+2024-07-09 04:40:29;ERROR;PyNaCl library needed in order to use voice
+2024-07-09 05:31:03;DEBUG;Message received from camsterrrr: !join
+2024-07-09 05:31:03;ERROR;PyNaCl library needed in order to use voice
+2024-07-09 05:31:10;DEBUG;Attempting to start Groovester!
+2024-07-09 05:31:10;DEBUG;Using selector: EpollSelector
+2024-07-09 05:31:10;INFO;logging in using static token
+2024-07-09 05:31:11;INFO;Shard ID None has connected to Gateway (Session ID: ef7f4190d8866eefe77f05d0785960a5).
+2024-07-09 05:31:13;INFO;Groovester started Successfully!
+2024-07-09 05:31:17;DEBUG;Message received from camsterrrr: !join
+2024-07-09 05:31:17;ERROR;PyNaCl library needed in order to use voice
+2024-07-09 05:37:34;DEBUG;Attempting to start Groovester!
+2024-07-09 05:37:34;DEBUG;Using selector: EpollSelector
+2024-07-09 05:37:34;INFO;logging in using static token
+2024-07-09 05:37:35;INFO;Shard ID None has connected to Gateway (Session ID: 47e287f9a144c846498afa9f408c288b).
+2024-07-09 05:37:37;INFO;Groovester started Successfully!
+2024-07-09 05:37:43;DEBUG;Message received from camsterrrr: !join
+2024-07-09 05:37:43;ERROR;PyNaCl library needed in order to use voice
+2024-07-09 05:40:57;DEBUG;Message received from camsterrrr: !join
+2024-07-09 05:40:57;ERROR;PyNaCl library needed in order to use voice
+2024-07-09 05:46:02;DEBUG;Attempting to start Groovester!
+2024-07-09 05:46:02;DEBUG;Using selector: EpollSelector
+2024-07-09 05:46:02;INFO;logging in using static token
+2024-07-09 05:46:03;INFO;Shard ID None has connected to Gateway (Session ID: 715af27044756ea18426e9a5b024ebe2).
+2024-07-09 05:46:05;INFO;Groovester started Successfully!
+2024-07-09 05:46:35;DEBUG;Message received from camsterrrr: !join
+2024-07-09 05:46:35;DEBUG;!join attempting to connect to voice channel: General (ID: 984963250238140430)
+2024-07-09 05:46:35;ERROR;PyNaCl library needed in order to use voice
+2024-07-09 05:47:14;DEBUG;Message received from camsterrrr: !join
+2024-07-09 05:47:14;DEBUG;!join attempting to connect to voice channel: General (ID: 984963250238140430)
+2024-07-09 05:47:14;ERROR;PyNaCl library needed in order to use voice
+2024-07-09 05:47:21;DEBUG;Attempting to start Groovester!
+2024-07-09 05:47:21;DEBUG;Using selector: EpollSelector
+2024-07-09 05:47:21;INFO;logging in using static token
+2024-07-09 05:47:21;INFO;Shard ID None has connected to Gateway (Session ID: 6e2b0169c5f416f4fa743e028a88222e).
+2024-07-09 05:47:23;INFO;Groovester started Successfully!
+2024-07-09 05:47:27;DEBUG;Message received from camsterrrr: !join
+2024-07-09 05:47:27;DEBUG;!join attempting to connect to voice channel: General (ID: 984963250238140430)
+2024-07-09 05:47:27;ERROR;PyNaCl library needed in order to use voice
+2024-07-09 05:49:39;DEBUG;Attempting to start Groovester!
+2024-07-09 05:49:39;DEBUG;Using selector: EpollSelector
+2024-07-09 05:49:39;INFO;logging in using static token
+2024-07-09 05:49:40;INFO;Shard ID None has connected to Gateway (Session ID: 510f7714cbb00d1fd22d4fb6cee4a7cd).
+2024-07-09 05:49:42;INFO;Groovester started Successfully!
+2024-07-09 05:49:45;DEBUG;Message received from camsterrrr: !join
+2024-07-09 05:49:45;DEBUG;!join attempting to connect to voice channel: General (ID: 984963250238140430)
+2024-07-09 05:49:45;INFO;Connecting to voice...
+2024-07-09 05:49:45;INFO;Starting voice handshake... (connection attempt 1)
+2024-07-09 05:49:45;INFO;Voice handshake complete. Endpoint found: santa-clara4454.discord.media
+2024-07-09 05:49:46;INFO;Voice connection complete.
+2024-07-09 05:49:46;DEBUG;!join successfully connected to the voice channel: General (ID: 984963250238140430)
+2024-07-09 05:49:46;DEBUG;Message received from Groovester#0306: !play usage:	 !play *URL to YouTube URL*
+	Groovester will download YouTube video and play it in a voice channel!
+2024-07-09 05:49:46;DEBUG;Message received from Groovester#0306: Incorrect !play usage...
+	Please enter a valid domain.
+2024-07-09 05:50:02;INFO;The voice handshake is being terminated for Channel ID 984963250238140430 (Guild ID 984963250238140426)
+2024-07-09 06:15:44;DEBUG;Message received from camsterrrr: !join
+2024-07-09 06:15:44;DEBUG;!join attempting to connect to voice channel: General (ID: 984963250238140430)
+2024-07-09 06:15:44;INFO;Connecting to voice...
+2024-07-09 06:15:44;INFO;Starting voice handshake... (connection attempt 1)
+2024-07-09 06:15:44;INFO;Voice handshake complete. Endpoint found: santa-clara4454.discord.media
+2024-07-09 06:15:44;INFO;Voice connection complete.
+2024-07-09 06:15:44;DEBUG;!join successfully connected to the voice channel: General (ID: 984963250238140430)
+2024-07-09 06:15:44;DEBUG;Message received from Groovester#0306: !play usage:	 !play *URL to YouTube URL*
+	Groovester will download YouTube video and play it in a voice channel!
+2024-07-09 06:15:45;DEBUG;Message received from Groovester#0306: Incorrect !play usage...
+	Please enter a valid domain.
+2024-07-09 06:15:52;DEBUG;Message received from camsterrrr: !leave
+2024-07-09 06:15:57;INFO;Disconnected from voice by force... potentially reconnecting.
+2024-07-09 06:15:57;INFO;The voice handshake is being terminated for Channel ID 984963250238140430 (Guild ID 984963250238140426)
+2024-07-09 06:15:57;INFO;Reconnect was unsuccessful, disconnecting from voice normally...
+DEBUG;2024-07-09 06:16:05;Attempting to start Groovester!
+DEBUG;2024-07-09 06:16:05;Using selector: EpollSelector
+INFO;2024-07-09 06:16:05;logging in using static token
+INFO;2024-07-09 06:16:06;Shard ID None has connected to Gateway (Session ID: 71eebbb04e6f860a45bddeed1fce4198).
+INFO;2024-07-09 06:16:08;Groovester started Successfully!
+DEBUG;2024-07-09 06:16:11;Message received from camsterrrr: !join
+INFO;2024-07-09 06:16:11;Connecting to voice...
+INFO;2024-07-09 06:16:11;Starting voice handshake... (connection attempt 1)
+INFO;2024-07-09 06:16:11;Voice handshake complete. Endpoint found: santa-clara4454.discord.media
+INFO;2024-07-09 06:16:11;Voice connection complete.
+DEBUG;2024-07-09 06:16:11;!join successfully connected to the voice channel: General (ID: 984963250238140430)
+DEBUG;2024-07-09 06:16:17;Message received from camsterrrr: !leave
+ERROR;2024-07-09 06:16:17;'VoiceChannel' object has no attribute 'disconnect'
+INFO;2024-07-09 06:17:03;The voice handshake is being terminated for Channel ID 984963250238140430 (Guild ID 984963250238140426)
+DEBUG;2024-07-09 06:17:05;Attempting to start Groovester!
+DEBUG;2024-07-09 06:17:05;Using selector: EpollSelector
+INFO;2024-07-09 06:17:05;logging in using static token
+INFO;2024-07-09 06:17:06;Shard ID None has connected to Gateway (Session ID: 8b6dc81002cd727b78375be019e8bdf3).
+INFO;2024-07-09 06:17:08;Groovester started Successfully!
+DEBUG;2024-07-09 06:17:12;Message received from camsterrrr: !join
+INFO;2024-07-09 06:17:12;Connecting to voice...
+INFO;2024-07-09 06:17:12;Starting voice handshake... (connection attempt 1)
+INFO;2024-07-09 06:17:12;Voice handshake complete. Endpoint found: santa-clara4454.discord.media
+INFO;2024-07-09 06:17:12;Voice connection complete.
+DEBUG;2024-07-09 06:17:12;!join successfully connected to the voice channel: General (ID: 984963250238140430)
+DEBUG;2024-07-09 06:17:16;Message received from camsterrrr: !leave
+INFO;2024-07-09 06:17:16;The voice handshake is being terminated for Channel ID 984963250238140430 (Guild ID 984963250238140426)
+DEBUG;2024-07-09 06:17:16;!leave successfully disconnected from the voice channel: General (ID: 984963250238140430)
+DEBUG;2024-07-09 06:17:54;Message received from camsterrrr: !leave
+ERROR;2024-07-09 06:17:54;Ignoring exception in on_message
+Traceback (most recent call last):
+  File "/home/jbone/.local/lib/python3.10/site-packages/discord/client.py", line 449, in _run_event
+    await coro(*args, **kwargs)
+  File "/home/jbone/onedrive/projects/Groovester/src/Groovester.py", line 255, in on_message
+    if voiceClientInst.is_connected() :
+AttributeError: 'NoneType' object has no attribute 'is_connected'
+DEBUG;2024-07-09 06:19:40;Message received from camsterrrr: !leave
+ERROR;2024-07-09 06:19:40;Ignoring exception in on_message
+Traceback (most recent call last):
+  File "/home/jbone/.local/lib/python3.10/site-packages/discord/client.py", line 449, in _run_event
+    await coro(*args, **kwargs)
+  File "/home/jbone/onedrive/projects/Groovester/src/Groovester.py", line 255, in on_message
+    if voiceClientInst not None :
+AttributeError: 'NoneType' object has no attribute 'is_connected'
+DEBUG;2024-07-09 06:20:31;Attempting to start Groovester!
+DEBUG;2024-07-09 06:20:31;Using selector: EpollSelector
+INFO;2024-07-09 06:20:31;logging in using static token
+INFO;2024-07-09 06:20:32;Shard ID None has connected to Gateway (Session ID: ab19732c3431f5982f7bbff098fbadbd).
+INFO;2024-07-09 06:20:34;Groovester started Successfully!
+DEBUG;2024-07-09 06:20:39;Message received from camsterrrr: !leave
+ERROR;2024-07-09 06:20:39;!leave failed, Groovester is not in a voice channel.
