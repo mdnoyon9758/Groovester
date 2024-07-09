@@ -5,7 +5,7 @@ Want a groovy Discord voice channel? Groovester is a Discord Application that ca
 ## How to use
 
 
-### Step 0
+### Step 0: Package Setup
 
 This Discord Application relies on Python 3 and several Python modules inorder to operate. 
 
@@ -108,7 +108,7 @@ This is an open-source project after all! If you want to contribute a feature, o
 
 ### Logging
 
-### Multi-threaded features
+### Multi-Threaded Features
 
 ### Temporary Data
 
