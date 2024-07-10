@@ -1,22 +1,22 @@
 import logging as log
 import os
-from pytube import YouTube as yt # Dev docs: https://pypi.org/project/python-youtube/
+from pytube import YouTube # Dev docs: https://pytube.io/en/latest/api.html#youtube-object
 
 linkToYouTubeVideo = ""
 
 def downloadYouTubeVideoViaLink():
 	global linkToYouTubeVideo
 
-	linkToYouTubeVideo = input("Enter the YouTube video URL: ")
-	log.debug("YouTube video URL" + linkToYouTubeVideo)
-
-	youtubeObj = yt(linkToYouTubeVideo)
-	youtubeObj = youtubeObj.streams.get_highest_resolution()
+	# linkToYouTubeVideo = input("Enter the YouTube video URL: ")
 
 	try:
-	    youtubeObj.download()
-	except:
-	    log.error("An error has occurred with downloading the YouTube video")
+		youtubeObj = YouTube("https://youtu.be/5_xKLgaCwkM?si=4zbTw3OU90aL-yKY")
+		youtubeObj = youtubeObj.streams.get_audio_only()
+		log.debug("Starting to download")
+		youtubeObj.download()
+		log.debug("Finished the download")
+	except OSError as err:
+	    log.error(f"{err}")
 	    return False
 
 	return True
@@ -37,10 +37,16 @@ def setupFs() :
 	os.chdir("/home/jbone/youtube/downloads/")
 
 if __name__ == "__main__" :
-	log.basicConfig(format='%(levelname)s:%(message)s', level=log.DEBUG)
+	log.basicConfig(
+        datefmt="%Y-%m-%d %H:%M:%S", 
+        format='%(levelname)s;%(asctime)s;%(message)s', 
+        level=log.DEBUG
+    )
 
 	setupFs()
 	if downloadYouTubeVideoViaLink() :
 		log.info("Downloaded completed successfully!")
 
     
+
+    # https://www.youtube.com/watch?v=5_xKLgaCwkM

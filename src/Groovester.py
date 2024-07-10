@@ -1,97 +1,24 @@
 """ LIBRARIES """
 
-import discord
-from discord.ext import commands,tasks
-from dotenv import load_dotenv
 import logging as log
 import os
-from pytube import YouTube as yt
+from pytube import YouTube
 from threading import Condition, Lock, Thread
-from time import sleep
 from validators import url
 
+from src.constants import ClientMessages, DebugMessages, ErrorMessages, InfoMessages
 
-""" GLOBAL VARIABLES """
-
-absPathGroovester = ""
-listOfDownloadedSongsToPlay = []
-
-# Create Discord bot and client instance.
-intents = discord.Intents.default()
-intents.message_content = True
-# bot = commands.Bot(command_prefix='!', intents=intents)
-client = discord.Client(intents=intents)
-
-# Synchronization variables.
-# Either one reader or one writer at a time.
-numReaders = 0
-numWriters = 0
-_readerLock = Lock() # Used when the Discord bot will load next song to local variable.
-_writerLock = Lock() # Used when commands like "!play" are issued.
-readerCv = Condition(lock=_readerLock)
-writerCv = Condition(lock=_writerLock)
-
-# Help messages.
-_helpPlayCommand = (
-    "!play usage:\t !play *URL to YouTube URL*\n"
-    + "\tGroovester will download YouTube video and play it in a voice channel!"
-)
-
-# Error messages
-_playCommandIncorrectDomain = (
-    "Incorrect !play usage...\n"
-    + "\t Please enter a valid domain."
-)
-_playCommandIncorrectParameters = (
-    "Incorrect !play usage...\n"
-    + "Usage:\t !play *URL to YouTube video*"
-)
-_playCommandUnreachableDomain = (
-    "Incorrect !play usage...\n"
-    + "Enter a valid domain."
-)
+absPathGroovester = None
+log.getLogger(__name__) # Set same logging parameters as client.py.
 
 
 """ FUNCTIONS """
 
-def playDownloadedSongViaDiscordAudio() :
-    global listOfDownloadedSongsToPlay, numReaders, numWriters
-
-    with readerCv :
-        while ( # Fall through if there are no active readers or writers.
-            numReaders > 0 
-            or numWriters > 0 
-            or listOfDownloadedSongsToPlay.size() == 0
-        ) : # ! Todo: For now spin-lock, evenutally have bounded-buffer
-            readerCv.wait()
-        numReaders = numReaders + 1
-
-        # Store absolute path to downloaded song to play
-        tempAbsPathToDownloadedVideoToPlay = ""
-        tempAbsPathToDownloadedVideoToPlay = listOfDownloadedSongsToPlay[0]
-        listOfDownloadedSongsToPlay = listOfDownloadedSongsToPlay[1:]
-
-        numReaders = numReaders - 1
-        with writerCv :
-            writerCv.signal()
-
-        #! Todo: Check that bot is in voice channel. If not recoomned user issues !join command.
-
-        #! Todo: Begin playing song over the Discord voice channel.
-
-        #! Todo: Delete the downloaded file after song ends.
-        if os.path.exists(tempAbsPathToDownloadedVideoToPlay) :
-            try :
-                os.rm(tempAbsPathToDownloadedVideoToPlay)
-            except OSError as err :
-                log.error(err) 
-
-                return False
-
-    return True
-
-def setupFs() :
+#* Todo: Pass system argument to identify if OS is Linux or Windows. Helps setup FS.
+#* Todo: Create a thread that goes through and verifies the videos stored in /tmp are still there. Compare against list.
+def setupTmpDirectory() :
     global absPathGroovester
+    absPathGroovester = ""
 
     absPathGroovester = (
         absPathGroovester + "/tmp/Groovester"
@@ -120,116 +47,172 @@ def setupFs() :
     return True
 
 
-""" CLIENT EVENTS """
+""" CLASSES """
 
-@client.event
-async def on_ready() :
-    strToLog = "Groovester started Successfully!"
+class GroovesterEventHandler :
 
-    log.info(strToLog)
-    print(strToLog)
+    """ CONSTRUCTOR """
 
-    return True
+    def __init__(self) :
 
-# @bot.command(name="send", help=_helpPlayCommand)
-# async def playCommand(context) :
-#     await ctx.send("Hellow!")
+        """ MEMBER VARIABLES """
 
-@client.event
-async def on_message(message) : # Message procedure
-    global listOfDownloadedSongsToPlay, numReaders, numWriters
+        # List to store absolute path of audio files to play.
+        self.listOfDownloadedSongsToPlay = []
 
-    # prevent bot from responding to itself
-    if message.author == client.user :
-        pass
+        # Synchronization variables.
+        # Either one reader or one writer at a time.
+        self.numReaders = 0
+        self.numWriters = 0
+        self._readerLock = Lock() # Used when the Discord bot will load next song to local variable.
+        self._writerLock = Lock() # Used when commands like "!play" are issued.
+        self.readerCv = Condition(lock=self._readerLock)
+        self.writerCv = Condition(lock=self._writerLock)
 
-    log.debug(
-        f"Message received from {message.author}: {message.content}"
-    )
+        self.voiceClientInst = None
 
-    if message.content == "!help" :
-        await message.channel.send(_helpPlayCommand)
-    
-    # !play: Downloads video to local file system and enrolls song in queue.
-    elif message.content.startswith("!play") :
+
+    """ MEMBER FUNCTIONS """
+
+    async def joinClientEvent(self, message) :
+        # Validate author is in a voice channel.
+        if message.author.voice :
+            # Connect Groovester to voice channel.
+            try :
+                channel = message.author.voice.channel
+                self.voiceClientInst = await channel.connect() 
+                log.debug(f"!join successfully connected to the voice channel: {channel.name} (ID: {channel.id})")
+            except Exception as err :
+                log.error(err)
+
+                return False
+        else :
+            log.error("!join failed, author is not in a voice channel.")
+            await message.channel.send(ErrorMessages._joinCommandNoActiveVoiceChannel)
+
+            return False
+
+        #* Todo: Send a list of useful commands to the text channel.
+        await message.channel.send("!join successfully completed, here are some useful commands to get you started: ")
+
+        return True
+
+    async def leaveClientEvent(self, message) :
+
+        # Validate Groovester is in a voice channel
+        if not self.voiceClientInst == None :
+            # If connected to a voice channel, disconnect Groovester.
+            if self.voiceClientInst.is_connected() :
+                try :
+                    channel = message.author.voice.channel
+                    self.voiceClientInst = await self.voiceClientInst.disconnect() 
+                    log.debug(f"!leave successfully disconnected from the voice channel: {channel.name} (ID: {channel.id})")
+                except Exception as err :
+                    log.error(err)
+
+                    return False
+        else :
+            log.error("!leave failed, Groovester is not in a voice channel.")
+            await message.channel.send(ErrorMessages._leaveCommandNoActiveVoiceChannel)
+
+            return False
+
+        await message.channel.send("Bye, bye! :(")
+        #* Todo: print the number of songs still in queue.
+
+        return True
+
+    async def playClientEvent(self, message) :
 
         # Input validation.
 
         # Isolate URL parameter from command.
         linkToYouTubeVideo = str(message.content)
-        if len(message.content) > 5 # Ensure format of "!play " (emphasis on ' '), not "!play-" or "!play#"
-            and linkToYouTubeVideo[5] == " " : 
+
+        # Ensure format of "!play " (emphasis on ' '), not "!play-" or "!play#"
+        if (len(message.content) > 5 
+            and linkToYouTubeVideo[5] == " ") : 
             linkToYouTubeVideo = message.content.split(" ")[1]
-        # Else, error handle incorrect URL.
-        #* How do I make it so I don't rewrite this seciton over and over. Maybe use GOTO?
         else :
-            await message.channel.send(_playCommandIncorrectParameters)
+            await message.channel.send(ErrorMessages._playCommandIncorrectParameters)
             return False
 
         # Check domain is what is expected. 
-        if not linkToYouTubeVideo.startswith("https://youtube.com/") :
-            await message.channel.send(_playCommandIncorrectDomain)
+        if not linkToYouTubeVideo.startswith("https://www.youtube.com/") :
+            await message.channel.send(ErrorMessages._playCommandIncorrectDomain)
             return False
 
         # Test if the Domain is reachable and valid. (Emphasis on Domain)
         if not url(linkToYouTubeVideo) :
-            await message.channel.send(_playCommandUnreachableDomain)
+            await message.channel.send(ErrorMessages._playCommandUnreachableDomain)
             return False
 
-        # Download video via pytube API.
-        ytObj = yt(linkToYouTubeVideo)
-        ytObj = ytObj.streams.get_highest_resolution()
+        #* Todo: Ensure that the local file system has enough space for the video.
         try :
-            ytObj.download()
-            log.debug("Successfully downloaded: " + linkToYouTubeVideo)
-        except :
-            log.error("An error has occurred with downloading the YouTube video")
+            ytObj = YouTube(linkToYouTubeVideo)
+            # Download video via pytube API.
+            audioStream = ytObj.streams.get_audio_only()
+            audioStream.download()
+            log.debug(f"{InfoMessages._playSuccessfulyDownloadedVideo} {linkToYouTubeVideo}")
+        except OSError as err:
+            log.error(f"{ErrorMessages._playFailedToDownloadVideoException} {err}")
 
             return False
 
         # Acquire lock and await signal.
-        with writerCv :
+        with self.writerCv :
             while ( # Fall through if there are no active readers or writers.
-                    numReaders > 0 
-                    or numWriters > 0
+                    self.numReaders > 0 
+                    or self.numWriters > 0
                 ) :
             
-                writerCv.wait()
-            numWriters = numWriters + 1
+                self.writerCv.wait()
+            self.numWriters = self.numWriters + 1
 
             # Enter mutual exclusion and add song to queue.
             absPathToYtAudio = (
-                absPathGroovester + ytObj.titlea
+                absPathGroovester + ytObj.title
             )
-            listOfDownloadedSongsToPlay.append[absPathToYtAudio]
-            log.debug("Adding YouTube video URL to queue: " + absPathToYtAudio)
+            self.listOfDownloadedSongsToPlay.append(absPathToYtAudio)
+            log.debug(f"{DebugMessages._playAddingVideoToQueue} {absPathToYtAudio}")
 
-            numWriters = numWriters - 1
+            self.numWriters = self.numWriters - 1
             # Signal any threads waiting to run.
-            with readerCv :
-                readerCv.signal()
-            writerCv.signal() 
-
-    return True
+            with self.readerCv :
+                self.readerCv.notify()
+            self.writerCv.notify() 
 
 
+    def playDownloadedSongViaDiscordAudio() :
+        with readerCv :
+            while ( # Fall through if there are no active readers or writers.
+                self.numReaders > 0 
+                or self.numWriters > 0 
+                or self.listOfDownloadedSongsToPlay.size() == 0
+            ) : # ! Todo: For now spin-lock, evenutally have bounded-buffer
+                readerCv.wait()
+            numReaders = numReaders + 1
 
-if __name__ == "__main__" :
-    log.basicConfig(
-        datefmt="%Y-%m-%d %H:%M:%S", 
-        filename='Groovester.log', 
-        format='%(asctime)s;%(levelname)s;%(message)s', 
-        level=log.DEBUG
-    )
+            # Store absolute path to downloaded song to play
+            tempAbsPathToDownloadedVideoToPlay = ""
+            tempAbsPathToDownloadedVideoToPlay = self.listOfDownloadedSongsToPlay[0]
+            self.listOfDownloadedSongsToPlay = self.listOfDownloadedSongsToPlay[1:]
 
-    setupFs()
+            self.numReaders = self.numReaders - 1
+            with self.writerCv :
+                self.writerCv.notify()
 
-    # Retrieve bot's API token from a .env file within the file system.
-    load_dotenv()
-    try : 
-        log.debug("Attempting to start Groovester!")
-        client.run(os.getenv("botToken"))
-    except Exception as err :
-        print
-        log.error("An error occurred while starting the bot!")
-        print(err)
+            #! Todo: Check that bot is in voice channel. If not recoomned user issues !join command.
+
+            #! Todo: Begin playing song over the Discord voice channel.
+
+            #! Todo: Delete the downloaded file after song ends.
+            if os.path.exists(tempAbsPathToDownloadedVideoToPlay) :
+                try :
+                    os.rm(tempAbsPathToDownloadedVideoToPlay)
+                except OSError as err :
+                    log.error(err) 
+
+                    return False
+
+        return True
