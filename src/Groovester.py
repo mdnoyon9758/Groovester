@@ -2,13 +2,52 @@
 
 import logging as log
 import os
-from pytube import YouTube as yt
+from pytube import YouTube
 from threading import Condition, Lock, Thread
 from validators import url
 
-from src.constants import ClientMessages, ErrorMessages
+from src.constants import ClientMessages, DebugMessages, ErrorMessages, InfoMessages
 
-log.getLogger(__name__)
+absPathGroovester = None
+log.getLogger(__name__) # Set same logging parameters as client.py.
+
+
+""" FUNCTIONS """
+
+#* Todo: Pass system argument to identify if OS is Linux or Windows. Helps setup FS.
+#* Todo: Create a thread that goes through and verifies the videos stored in /tmp are still there. Compare against list.
+def setupTmpDirectory() :
+    global absPathGroovester
+    absPathGroovester = ""
+
+    absPathGroovester = (
+        absPathGroovester + "/tmp/Groovester"
+    )
+    if not os.path.exists(absPathGroovester) :
+        try :
+            os.mkdir(absPathGroovester)
+        except OSError as err :
+            log.error(err)
+
+            return False  
+
+    absPathGroovester = (
+        absPathGroovester + "/downloads"
+    )
+    if not os.path.exists(absPathGroovester) : 
+        try :
+            os.mkdir(absPathGroovester)
+        except OSError as err :
+            log.error(err) 
+
+            return False
+
+    os.chdir(absPathGroovester)
+
+    return True
+
+
+""" CLASSES """
 
 class GroovesterEventHandler :
 
@@ -94,15 +133,12 @@ class GroovesterEventHandler :
         if (len(message.content) > 5 
             and linkToYouTubeVideo[5] == " ") : 
             linkToYouTubeVideo = message.content.split(" ")[1]
-        # Else, error handle incorrect URL.
-
-        #* Todo: How do I make it so I don't rewrite this seciton over and over. Maybe use GOTO?
         else :
             await message.channel.send(ErrorMessages._playCommandIncorrectParameters)
             return False
 
         # Check domain is what is expected. 
-        if not linkToYouTubeVideo.startswith("https://youtube.com/") :
+        if not linkToYouTubeVideo.startswith("https://www.youtube.com/") :
             await message.channel.send(ErrorMessages._playCommandIncorrectDomain)
             return False
 
@@ -111,18 +147,15 @@ class GroovesterEventHandler :
             await message.channel.send(ErrorMessages._playCommandUnreachableDomain)
             return False
 
-        
-        ytObj = yt(linkToYouTubeVideo)
-
         #* Todo: Ensure that the local file system has enough space for the video.
-
-        # Download video via pytube API.
-        ytObj = ytObj.streams.get_highest_resolution()
         try :
-            ytObj.download()
-            log.debug("!play successfully downloaded: " + linkToYouTubeVideo)
-        except :
-            log.error("!play failed, an error has occurred with downloading the YouTube video")
+            ytObj = YouTube(linkToYouTubeVideo)
+            # Download video via pytube API.
+            audioStream = ytObj.streams.get_audio_only()
+            audioStream.download()
+            log.debug(f"{InfoMessages._playSuccessfulyDownloadedVideo} {linkToYouTubeVideo}")
+        except OSError as err:
+            log.error(f"{ErrorMessages._playFailedToDownloadVideoException} {err}")
 
             return False
 
@@ -140,14 +173,14 @@ class GroovesterEventHandler :
             absPathToYtAudio = (
                 absPathGroovester + ytObj.title
             )
-            self.listOfDownloadedSongsToPlay.append[absPathToYtAudio]
-            log.debug("Adding YouTube video URL to queue: " + absPathToYtAudio)
+            self.listOfDownloadedSongsToPlay.append(absPathToYtAudio)
+            log.debug(f"{DebugMessages._playAddingVideoToQueue} {absPathToYtAudio}")
 
             self.numWriters = self.numWriters - 1
             # Signal any threads waiting to run.
             with self.readerCv :
-                self.readerCv.signal()
-            self.writerCv.signal() 
+                self.readerCv.notify()
+            self.writerCv.notify() 
 
 
     def playDownloadedSongViaDiscordAudio() :
@@ -167,7 +200,7 @@ class GroovesterEventHandler :
 
             self.numReaders = self.numReaders - 1
             with self.writerCv :
-                self.writerCv.signal()
+                self.writerCv.notify()
 
             #! Todo: Check that bot is in voice channel. If not recoomned user issues !join command.
 

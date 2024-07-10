@@ -5,14 +5,30 @@ Want a groovy Discord voice channel? Groovester is a Discord Application that ca
 ## Groovester's Commands
 
 ```
-!help
+!help, used to display useful commands.
 
-!join
-!leave
+!join, used to join the voice channel the message author is connected to.
+!leave, used to disconnect from the voice channel Groovester is connected to.
 
-!play
-!queue
-!stop
+!play *url to YouTube video*, used to download a YouTube video to the local file system and queue it for playing in the voice channel.
+!queue, used to print the queue of songs.
+!stop, used to halt Groovester's "speaking" in the voice channel.
+```
+
+## Tree
+
+```
+Groovester
+|———————— .env
+|———————— .git
+|———————— src
+|          |———————— __init__.py   ; Empty file that makes "src" act as a Python module.
+|          |———————— _logging_.py  ; Used to sync logging settings among all files.
+|          |———————— client.py     ; Catches and responds to all client events.
+|          |———————— constants.py  ; Defines all of the messages that are logged or sent as a message.
+|          |———————— Groovester.py ; Contains all of the main application logic.
+|———————— test
+|————————README.md
 ```
 
 ## How to Host Groovester Yourself
@@ -55,15 +71,7 @@ Before you read any further, ensure that after you've created a Discord applicat
 
 Currently, the Groovester application will pull the application token from a .env file, which is expected to be in the Groovester top-level directory on your local machine. If you locate it anywhere else, you may need to modify the source code. When creating your .env file, format it as follows: `botToken = "your token wrapped in quotes"`.
 
-```
-Groovester
-|———————— .env
-|———————— .git
-|———————— src
-|          |———————— Groovester.py
-|———————— test
-|————————README.md
-```
+Reference the "Tree" section as needed.
 
 ### Step 3: Running the Application
 
@@ -76,7 +84,7 @@ To create a new `screen` instance run the following command.
 ```bash
 screen -dmS Groovester
 screen -S Groovester -X stuff "^M"
-screen -S Groovester -X stuff "python3 src/Groovester.py^M"
+screen -S Groovester -X stuff "python3 -m src.client^M"
 ```
 
 To "reattach" into the `screen` session, issue the following command.
@@ -137,6 +145,19 @@ When issuing the `!play` command, Groovester will download the requested YouTube
 In this section, I'll list some seemingly random notes. This is more or less for my own recollection, in the event I ever need to revisit these issues.
 
 - I had some issues with joining the bot to a voice channel. I had properly implemented the `!join` command and verified the application's permissions within my server, but the issues came down to my Ubuntu instance not having the PyNaCl package installed. After installing, the bot joined the voice channel without issues.
+- I ran into some issues downloading YouTube audio using pytube. Every time I would try to invoke the "StreamObject" (YouTube.streams), it would throw the following exception (see below). The following PyTybe GitHub issue described a fix, which I followed to get pytube to successfully download YouTube audio. Link, https://github.com/pytube/pytube/issues/1954.
+
+```
+Traceback (most recent call last):
+  . . .
+pytube.exceptions.RegexMatchError: get_throttling_function_name: could not find match for multiple
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  . . .
+pytube.exceptions.RegexMatchError: get_throttling_function_name: could not find match for multiple
+```
 
 ## Contributors
 

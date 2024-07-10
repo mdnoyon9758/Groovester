@@ -494,3 +494,322 @@ DEBUG;2024-07-10 06:33:42;Using selector: EpollSelector
 INFO;2024-07-10 06:33:42;logging in using static token
 INFO;2024-07-10 06:33:44;Shard ID None has connected to Gateway (Session ID: f616b25e496ed08ccfc6ec020a55a479).
 INFO;2024-07-10 06:33:46;Groovester started Successfully!
+ERROR;2024-07-10 17:50:58;An err occurred while trying to start the Groovster client:  name 'DebugMessages' is not defined
+ERROR;2024-07-10 17:51:12;An err occurred while trying to start the Groovster client:  name 'DebugMessages' is not defined
+DEBUG;2024-07-10 17:52:26;Attempting to start Groovester!
+DEBUG;2024-07-10 17:52:26;Using selector: EpollSelector
+INFO;2024-07-10 17:52:26;logging in using static token
+INFO;2024-07-10 17:52:27;Shard ID None has connected to Gateway (Session ID: d2e18949fc092d2fb84db5ca7e4cfc46).
+INFO;2024-07-10 17:52:29;Groovester started Successfully!
+DEBUG;2024-07-10 17:52:38;Message received from camsterrrr: !leave
+ERROR;2024-07-10 17:52:38;!leave failed, Groovester is not in a voice channel.
+DEBUG;2024-07-10 17:52:45;Message received from camsterrrr: !play asdf
+DEBUG;2024-07-10 17:52:59;Message received from camsterrrr: !play https://github.com/camsterrrr
+DEBUG;2024-07-10 17:56:53;Message received from camsterrrr: !play https://www.youtube.com/watch?v=5_xKLgaCwkM
+DEBUG;2024-07-10 17:57:30;Attempting to start Groovester!
+DEBUG;2024-07-10 17:57:30;Using selector: EpollSelector
+INFO;2024-07-10 17:57:30;logging in using static token
+INFO;2024-07-10 17:57:31;Shard ID None has connected to Gateway (Session ID: 50086eca0cc23d0f452b1657aea2b269).
+INFO;2024-07-10 17:57:33;Groovester started Successfully!
+DEBUG;2024-07-10 17:57:40;Message received from camsterrrr: !play https://www.youtube.com/watch?v=5_xKLgaCwkM
+DEBUG;2024-07-10 17:57:40;matched regex search: (?:v=|\/)([0-9A-Za-z_-]{11}).*
+DEBUG;2024-07-10 17:57:41;applying descrambler
+DEBUG;2024-07-10 17:57:41;finding initial function name
+DEBUG;2024-07-10 17:57:41;Pattern failed: ytplayer\.config\s*=\s*
+DEBUG;2024-07-10 17:57:41;Could not parse object.
+DEBUG;2024-07-10 17:57:41;finished regex search, matched: (/s/player/[\w\d]+/[\w\d_/.]+/base\.js)
+DEBUG;2024-07-10 17:57:41;finding initial function name
+DEBUG;2024-07-10 17:57:42;finished regex search, matched: (?P<sig>[a-zA-Z0-9$]+)\s*=\s*function\(\s*a\s*\)\s*{\s*a\s*=\s*a\.split\(\s*""\s*\)
+DEBUG;2024-07-10 17:57:42;getting transform plan
+DEBUG;2024-07-10 17:57:42;matched regex search: SBa=function\(\w\){[a-z=\.\(\"\)]*;(.*);(?:.+)}
+DEBUG;2024-07-10 17:57:42;getting transform object
+DEBUG;2024-07-10 17:57:42;Finding throttling function name
+DEBUG;2024-07-10 17:57:42;finding initial function name
+DEBUG;2024-07-10 17:57:42;Pattern failed: ytplayer\.config\s*=\s*
+DEBUG;2024-07-10 17:57:42;Could not parse object.
+DEBUG;2024-07-10 17:57:42;finished regex search, matched: (/s/player/[\w\d]+/[\w\d_/.]+/base\.js)
+DEBUG;2024-07-10 17:57:42;finding initial function name
+DEBUG;2024-07-10 17:57:42;finished regex search, matched: (?P<sig>[a-zA-Z0-9$]+)\s*=\s*function\(\s*a\s*\)\s*{\s*a\s*=\s*a\.split\(\s*""\s*\)
+DEBUG;2024-07-10 17:57:42;getting transform plan
+DEBUG;2024-07-10 17:57:42;matched regex search: SBa=function\(\w\){[a-z=\.\(\"\)]*;(.*);(?:.+)}
+DEBUG;2024-07-10 17:57:42;getting transform object
+DEBUG;2024-07-10 17:57:42;Finding throttling function name
+ERROR;2024-07-10 17:57:42;Ignoring exception in on_message
+Traceback (most recent call last):
+  File "/home/jbone/.local/lib/python3.10/site-packages/pytube/__main__.py", line 181, in fmt_streams
+    extract.apply_signature(stream_manifest, self.vid_info, self.js)
+  File "/home/jbone/.local/lib/python3.10/site-packages/pytube/extract.py", line 409, in apply_signature
+    cipher = Cipher(js=js)
+  File "/home/jbone/.local/lib/python3.10/site-packages/pytube/cipher.py", line 43, in __init__
+    self.throttling_plan = get_throttling_plan(js)
+  File "/home/jbone/.local/lib/python3.10/site-packages/pytube/cipher.py", line 405, in get_throttling_plan
+    raw_code = get_throttling_function_code(js)
+  File "/home/jbone/.local/lib/python3.10/site-packages/pytube/cipher.py", line 311, in get_throttling_function_code
+    name = re.escape(get_throttling_function_name(js))
+  File "/home/jbone/.local/lib/python3.10/site-packages/pytube/cipher.py", line 296, in get_throttling_function_name
+    raise RegexMatchError(
+pytube.exceptions.RegexMatchError: get_throttling_function_name: could not find match for multiple
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jbone/.local/lib/python3.10/site-packages/discord/client.py", line 449, in _run_event
+    await coro(*args, **kwargs)
+  File "/home/jbone/onedrive/projects/Groovester/src/client.py", line 57, in on_message
+    return await groovesterEventHandler.playClientEvent(message)
+  File "/home/jbone/onedrive/projects/Groovester/src/Groovester.py", line 156, in playClientEvent
+    ytObj = ytObj.streams.get_highest_resolution()
+  File "/home/jbone/.local/lib/python3.10/site-packages/pytube/__main__.py", line 296, in streams
+    return StreamQuery(self.fmt_streams)
+  File "/home/jbone/.local/lib/python3.10/site-packages/pytube/__main__.py", line 188, in fmt_streams
+    extract.apply_signature(stream_manifest, self.vid_info, self.js)
+  File "/home/jbone/.local/lib/python3.10/site-packages/pytube/extract.py", line 409, in apply_signature
+    cipher = Cipher(js=js)
+  File "/home/jbone/.local/lib/python3.10/site-packages/pytube/cipher.py", line 43, in __init__
+    self.throttling_plan = get_throttling_plan(js)
+  File "/home/jbone/.local/lib/python3.10/site-packages/pytube/cipher.py", line 405, in get_throttling_plan
+    raw_code = get_throttling_function_code(js)
+  File "/home/jbone/.local/lib/python3.10/site-packages/pytube/cipher.py", line 311, in get_throttling_function_code
+    name = re.escape(get_throttling_function_name(js))
+  File "/home/jbone/.local/lib/python3.10/site-packages/pytube/cipher.py", line 296, in get_throttling_function_name
+    raise RegexMatchError(
+pytube.exceptions.RegexMatchError: get_throttling_function_name: could not find match for multiple
+DEBUG;2024-07-10 18:06:16;Attempting to start Groovester!
+DEBUG;2024-07-10 18:06:16;Using selector: EpollSelector
+INFO;2024-07-10 18:06:16;logging in using static token
+INFO;2024-07-10 18:06:17;Shard ID None has connected to Gateway (Session ID: 72ba7485822c6abc16bbe7fc3da05499).
+INFO;2024-07-10 18:06:19;Groovester started Successfully!
+DEBUG;2024-07-10 18:06:37;Message received from camsterrrr: !play https://www.youtube.com/watch?v=5_xKLgaCwkM
+DEBUG;2024-07-10 18:06:37;matched regex search: (?:v=|\/)([0-9A-Za-z_-]{11}).*
+DEBUG;2024-07-10 18:06:38;applying descrambler
+DEBUG;2024-07-10 18:06:38;finding initial function name
+DEBUG;2024-07-10 18:06:38;Pattern failed: ytplayer\.config\s*=\s*
+DEBUG;2024-07-10 18:06:38;Could not parse object.
+DEBUG;2024-07-10 18:06:38;finished regex search, matched: (/s/player/[\w\d]+/[\w\d_/.]+/base\.js)
+DEBUG;2024-07-10 18:06:39;finding initial function name
+DEBUG;2024-07-10 18:06:39;finished regex search, matched: (?P<sig>[a-zA-Z0-9$]+)\s*=\s*function\(\s*a\s*\)\s*{\s*a\s*=\s*a\.split\(\s*""\s*\)
+DEBUG;2024-07-10 18:06:39;getting transform plan
+DEBUG;2024-07-10 18:06:39;matched regex search: SBa=function\(\w\){[a-z=\.\(\"\)]*;(.*);(?:.+)}
+DEBUG;2024-07-10 18:06:39;getting transform object
+DEBUG;2024-07-10 18:06:39;Finding throttling function name
+DEBUG;2024-07-10 18:06:39;finding initial function name
+DEBUG;2024-07-10 18:06:39;Pattern failed: ytplayer\.config\s*=\s*
+DEBUG;2024-07-10 18:06:39;Could not parse object.
+DEBUG;2024-07-10 18:06:39;finished regex search, matched: (/s/player/[\w\d]+/[\w\d_/.]+/base\.js)
+DEBUG;2024-07-10 18:06:39;finding initial function name
+DEBUG;2024-07-10 18:06:39;finished regex search, matched: (?P<sig>[a-zA-Z0-9$]+)\s*=\s*function\(\s*a\s*\)\s*{\s*a\s*=\s*a\.split\(\s*""\s*\)
+DEBUG;2024-07-10 18:06:39;getting transform plan
+DEBUG;2024-07-10 18:06:39;matched regex search: SBa=function\(\w\){[a-z=\.\(\"\)]*;(.*);(?:.+)}
+DEBUG;2024-07-10 18:06:39;getting transform object
+DEBUG;2024-07-10 18:06:39;Finding throttling function name
+ERROR;2024-07-10 18:06:39;Ignoring exception in on_message
+Traceback (most recent call last):
+  File "/home/jbone/.local/lib/python3.10/site-packages/pytube/__main__.py", line 181, in fmt_streams
+    extract.apply_signature(stream_manifest, self.vid_info, self.js)
+  File "/home/jbone/.local/lib/python3.10/site-packages/pytube/extract.py", line 409, in apply_signature
+    cipher = Cipher(js=js)
+  File "/home/jbone/.local/lib/python3.10/site-packages/pytube/cipher.py", line 43, in __init__
+    self.throttling_plan = get_throttling_plan(js)
+  File "/home/jbone/.local/lib/python3.10/site-packages/pytube/cipher.py", line 405, in get_throttling_plan
+    raw_code = get_throttling_function_code(js)
+  File "/home/jbone/.local/lib/python3.10/site-packages/pytube/cipher.py", line 311, in get_throttling_function_code
+    name = re.escape(get_throttling_function_name(js))
+  File "/home/jbone/.local/lib/python3.10/site-packages/pytube/cipher.py", line 296, in get_throttling_function_name
+    raise RegexMatchError(
+pytube.exceptions.RegexMatchError: get_throttling_function_name: could not find match for multiple
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jbone/.local/lib/python3.10/site-packages/discord/client.py", line 449, in _run_event
+    await coro(*args, **kwargs)
+  File "/home/jbone/onedrive/projects/Groovester/src/client.py", line 57, in on_message
+    return await groovesterEventHandler.playClientEvent(message)
+  File "/home/jbone/onedrive/projects/Groovester/src/Groovester.py", line 154, in playClientEvent
+    ytObj = ytObj.streams.get_highest_resolution()
+  File "/home/jbone/.local/lib/python3.10/site-packages/pytube/__main__.py", line 296, in streams
+    return StreamQuery(self.fmt_streams)
+  File "/home/jbone/.local/lib/python3.10/site-packages/pytube/__main__.py", line 188, in fmt_streams
+    extract.apply_signature(stream_manifest, self.vid_info, self.js)
+  File "/home/jbone/.local/lib/python3.10/site-packages/pytube/extract.py", line 409, in apply_signature
+    cipher = Cipher(js=js)
+  File "/home/jbone/.local/lib/python3.10/site-packages/pytube/cipher.py", line 43, in __init__
+    self.throttling_plan = get_throttling_plan(js)
+  File "/home/jbone/.local/lib/python3.10/site-packages/pytube/cipher.py", line 405, in get_throttling_plan
+    raw_code = get_throttling_function_code(js)
+  File "/home/jbone/.local/lib/python3.10/site-packages/pytube/cipher.py", line 311, in get_throttling_function_code
+    name = re.escape(get_throttling_function_name(js))
+  File "/home/jbone/.local/lib/python3.10/site-packages/pytube/cipher.py", line 296, in get_throttling_function_name
+    raise RegexMatchError(
+pytube.exceptions.RegexMatchError: get_throttling_function_name: could not find match for multiple
+DEBUG;2024-07-10 18:18:58;YouTube video URL: https://www.youtube.com/watch?v=5_xKLgaCwkM
+DEBUG;2024-07-10 18:18:58;matched regex search: (?:v=|\/)([0-9A-Za-z_-]{11}).*
+DEBUG;2024-07-10 18:18:58;Starting to download
+DEBUG;2024-07-10 18:18:58;Finished the download
+INFO;2024-07-10 18:18:58;Downloaded completed successfully!
+DEBUG;2024-07-10 19:15:11;Attempting to start Groovester!
+DEBUG;2024-07-10 19:15:11;Using selector: EpollSelector
+INFO;2024-07-10 19:15:11;logging in using static token
+INFO;2024-07-10 19:15:12;Shard ID None has connected to Gateway (Session ID: e5d3d88e5afd61e72dc1ce412e94b4cc).
+INFO;2024-07-10 19:15:14;Groovester started Successfully!
+DEBUG;2024-07-10 19:15:24;Message received from camsterrrr: !play https://www.youtube.com/watch?v=5_xKLgaCwkM
+DEBUG;2024-07-10 19:15:24;matched regex search: (?:v=|\/)([0-9A-Za-z_-]{11}).*
+DEBUG;2024-07-10 19:15:25;applying descrambler
+DEBUG;2024-07-10 19:15:25;finding initial function name
+DEBUG;2024-07-10 19:15:25;Pattern failed: ytplayer\.config\s*=\s*
+DEBUG;2024-07-10 19:15:25;Could not parse object.
+DEBUG;2024-07-10 19:15:25;finished regex search, matched: (/s/player/[\w\d]+/[\w\d_/.]+/base\.js)
+DEBUG;2024-07-10 19:15:26;finding initial function name
+DEBUG;2024-07-10 19:15:26;finished regex search, matched: (?P<sig>[a-zA-Z0-9$]+)\s*=\s*function\(\s*a\s*\)\s*{\s*a\s*=\s*a\.split\(\s*""\s*\)
+DEBUG;2024-07-10 19:15:26;getting transform plan
+DEBUG;2024-07-10 19:15:26;matched regex search: SBa=function\(\w\){[a-z=\.\(\"\)]*;(.*);(?:.+)}
+DEBUG;2024-07-10 19:15:26;getting transform object
+DEBUG;2024-07-10 19:15:26;Finding throttling function name
+DEBUG;2024-07-10 19:15:26;finished regex search, matched: \([a-z]\s*=\s*([a-zA-Z0-9$]+)(\[\d+\])?\([a-z]\)
+DEBUG;2024-07-10 19:15:26;finished regex search, matched: \([a-z]\s*=\s*([a-zA-Z0-9$]+)(\[\d+\])\([a-z]\)
+DEBUG;2024-07-10 19:15:26;Finding throttling function name
+DEBUG;2024-07-10 19:15:26;finished regex search, matched: \([a-z]\s*=\s*([a-zA-Z0-9$]+)(\[\d+\])?\([a-z]\)
+DEBUG;2024-07-10 19:15:26;finished regex search, matched: \([a-z]\s*=\s*([a-zA-Z0-9$]+)(\[\d+\])\([a-z]\)
+DEBUG;2024-07-10 19:15:26;signature found, skip decipher
+DEBUG;2024-07-10 19:15:26;signature found, skip decipher
+DEBUG;2024-07-10 19:15:26;signature found, skip decipher
+DEBUG;2024-07-10 19:15:26;signature found, skip decipher
+DEBUG;2024-07-10 19:15:26;signature found, skip decipher
+DEBUG;2024-07-10 19:15:26;signature found, skip decipher
+DEBUG;2024-07-10 19:15:26;signature found, skip decipher
+DEBUG;2024-07-10 19:15:26;signature found, skip decipher
+DEBUG;2024-07-10 19:15:27;downloading (5002439 total bytes) file to /tmp/Groovester/downloads/analog fade (new bule sky)  hot mulligan.mp4
+DEBUG;2024-07-10 19:15:28;download remaining: 0
+DEBUG;2024-07-10 19:15:28;download finished
+DEBUG;2024-07-10 19:15:28;!play successfully downloaded the following video: https://www.youtube.com/watch?v=5_xKLgaCwkM
+ERROR;2024-07-10 19:15:28;Ignoring exception in on_message
+Traceback (most recent call last):
+  File "/home/jbone/.local/lib/python3.10/site-packages/discord/client.py", line 449, in _run_event
+    await coro(*args, **kwargs)
+  File "/home/jbone/onedrive/projects/Groovester/src/client.py", line 57, in on_message
+    return await groovesterEventHandler.playClientEvent(message)
+  File "/home/jbone/onedrive/projects/Groovester/src/Groovester.py", line 176, in playClientEvent
+    self.listOfDownloadedSongsToPlay.append[absPathToYtAudio]
+TypeError: 'builtin_function_or_method' object is not subscriptable
+DEBUG;2024-07-10 19:16:41;Attempting to start Groovester!
+DEBUG;2024-07-10 19:16:41;Using selector: EpollSelector
+INFO;2024-07-10 19:16:41;logging in using static token
+INFO;2024-07-10 19:16:42;Shard ID None has connected to Gateway (Session ID: 8b7320a71140abfa4316fc567636043e).
+INFO;2024-07-10 19:16:44;Groovester started Successfully!
+DEBUG;2024-07-10 19:16:47;Message received from camsterrrr: !play https://www.youtube.com/watch?v=5_xKLgaCwkM
+DEBUG;2024-07-10 19:16:47;matched regex search: (?:v=|\/)([0-9A-Za-z_-]{11}).*
+DEBUG;2024-07-10 19:16:48;applying descrambler
+DEBUG;2024-07-10 19:16:48;finding initial function name
+DEBUG;2024-07-10 19:16:48;Pattern failed: ytplayer\.config\s*=\s*
+DEBUG;2024-07-10 19:16:48;Could not parse object.
+DEBUG;2024-07-10 19:16:48;finished regex search, matched: (/s/player/[\w\d]+/[\w\d_/.]+/base\.js)
+DEBUG;2024-07-10 19:16:49;finding initial function name
+DEBUG;2024-07-10 19:16:49;finished regex search, matched: (?P<sig>[a-zA-Z0-9$]+)\s*=\s*function\(\s*a\s*\)\s*{\s*a\s*=\s*a\.split\(\s*""\s*\)
+DEBUG;2024-07-10 19:16:49;getting transform plan
+DEBUG;2024-07-10 19:16:49;matched regex search: SBa=function\(\w\){[a-z=\.\(\"\)]*;(.*);(?:.+)}
+DEBUG;2024-07-10 19:16:49;getting transform object
+DEBUG;2024-07-10 19:16:49;Finding throttling function name
+DEBUG;2024-07-10 19:16:49;finished regex search, matched: \([a-z]\s*=\s*([a-zA-Z0-9$]+)(\[\d+\])?\([a-z]\)
+DEBUG;2024-07-10 19:16:49;finished regex search, matched: \([a-z]\s*=\s*([a-zA-Z0-9$]+)(\[\d+\])\([a-z]\)
+DEBUG;2024-07-10 19:16:49;Finding throttling function name
+DEBUG;2024-07-10 19:16:49;finished regex search, matched: \([a-z]\s*=\s*([a-zA-Z0-9$]+)(\[\d+\])?\([a-z]\)
+DEBUG;2024-07-10 19:16:49;finished regex search, matched: \([a-z]\s*=\s*([a-zA-Z0-9$]+)(\[\d+\])\([a-z]\)
+DEBUG;2024-07-10 19:16:49;signature found, skip decipher
+DEBUG;2024-07-10 19:16:49;signature found, skip decipher
+DEBUG;2024-07-10 19:16:49;signature found, skip decipher
+DEBUG;2024-07-10 19:16:49;signature found, skip decipher
+DEBUG;2024-07-10 19:16:49;signature found, skip decipher
+DEBUG;2024-07-10 19:16:49;signature found, skip decipher
+DEBUG;2024-07-10 19:16:49;signature found, skip decipher
+DEBUG;2024-07-10 19:16:49;signature found, skip decipher
+DEBUG;2024-07-10 19:16:49;downloading (1425301 total bytes) file to /tmp/Groovester/downloads/analog fade (new bule sky)  hot mulligan.mp4
+DEBUG;2024-07-10 19:16:49;download remaining: 0
+DEBUG;2024-07-10 19:16:49;download finished
+DEBUG;2024-07-10 19:16:49;!play successfully downloaded the following video: https://www.youtube.com/watch?v=5_xKLgaCwkM
+ERROR;2024-07-10 19:16:49;Ignoring exception in on_message
+Traceback (most recent call last):
+  File "/home/jbone/.local/lib/python3.10/site-packages/discord/client.py", line 449, in _run_event
+    await coro(*args, **kwargs)
+  File "/home/jbone/onedrive/projects/Groovester/src/client.py", line 57, in on_message
+    return await groovesterEventHandler.playClientEvent(message)
+  File "/home/jbone/onedrive/projects/Groovester/src/Groovester.py", line 176, in playClientEvent
+    self.listOfDownloadedSongsToPlay.append[absPathToYtAudio]
+TypeError: 'builtin_function_or_method' object is not subscriptable
+DEBUG;2024-07-10 19:23:49;Attempting to start Groovester!
+DEBUG;2024-07-10 19:23:49;Using selector: EpollSelector
+INFO;2024-07-10 19:23:49;logging in using static token
+INFO;2024-07-10 19:23:50;Shard ID None has connected to Gateway (Session ID: 50c93f64d27cdc5587460625b7362e35).
+INFO;2024-07-10 19:23:52;Groovester started Successfully!
+DEBUG;2024-07-10 19:24:00;Message received from camsterrrr: !play https://www.youtube.com/watch?v=5_xKLgaCwkM
+DEBUG;2024-07-10 19:24:00;matched regex search: (?:v=|\/)([0-9A-Za-z_-]{11}).*
+DEBUG;2024-07-10 19:24:01;applying descrambler
+DEBUG;2024-07-10 19:24:01;finding initial function name
+DEBUG;2024-07-10 19:24:01;Pattern failed: ytplayer\.config\s*=\s*
+DEBUG;2024-07-10 19:24:01;Could not parse object.
+DEBUG;2024-07-10 19:24:01;finished regex search, matched: (/s/player/[\w\d]+/[\w\d_/.]+/base\.js)
+DEBUG;2024-07-10 19:24:01;finding initial function name
+DEBUG;2024-07-10 19:24:02;finished regex search, matched: (?P<sig>[a-zA-Z0-9$]+)\s*=\s*function\(\s*a\s*\)\s*{\s*a\s*=\s*a\.split\(\s*""\s*\)
+DEBUG;2024-07-10 19:24:02;getting transform plan
+DEBUG;2024-07-10 19:24:02;matched regex search: SBa=function\(\w\){[a-z=\.\(\"\)]*;(.*);(?:.+)}
+DEBUG;2024-07-10 19:24:02;getting transform object
+DEBUG;2024-07-10 19:24:02;Finding throttling function name
+DEBUG;2024-07-10 19:24:02;finished regex search, matched: \([a-z]\s*=\s*([a-zA-Z0-9$]+)(\[\d+\])?\([a-z]\)
+DEBUG;2024-07-10 19:24:02;finished regex search, matched: \([a-z]\s*=\s*([a-zA-Z0-9$]+)(\[\d+\])\([a-z]\)
+DEBUG;2024-07-10 19:24:02;Finding throttling function name
+DEBUG;2024-07-10 19:24:02;finished regex search, matched: \([a-z]\s*=\s*([a-zA-Z0-9$]+)(\[\d+\])?\([a-z]\)
+DEBUG;2024-07-10 19:24:02;finished regex search, matched: \([a-z]\s*=\s*([a-zA-Z0-9$]+)(\[\d+\])\([a-z]\)
+DEBUG;2024-07-10 19:24:02;signature found, skip decipher
+DEBUG;2024-07-10 19:24:02;signature found, skip decipher
+DEBUG;2024-07-10 19:24:02;signature found, skip decipher
+DEBUG;2024-07-10 19:24:02;signature found, skip decipher
+DEBUG;2024-07-10 19:24:02;signature found, skip decipher
+DEBUG;2024-07-10 19:24:02;signature found, skip decipher
+DEBUG;2024-07-10 19:24:02;signature found, skip decipher
+DEBUG;2024-07-10 19:24:02;signature found, skip decipher
+DEBUG;2024-07-10 19:24:02;file /tmp/Groovester/downloads/analog fade (new bule sky)  hot mulligan.mp4 already exists, skipping
+DEBUG;2024-07-10 19:24:02;download finished
+DEBUG;2024-07-10 19:24:02;!play successfully downloaded the following video: https://www.youtube.com/watch?v=5_xKLgaCwkM
+DEBUG;2024-07-10 19:24:30;Attempting to start Groovester!
+DEBUG;2024-07-10 19:24:30;Using selector: EpollSelector
+INFO;2024-07-10 19:24:30;logging in using static token
+INFO;2024-07-10 19:24:31;Shard ID None has connected to Gateway (Session ID: 24e0bdb8dcdb7622a2b73e0693bfcf2c).
+INFO;2024-07-10 19:24:33;Groovester started Successfully!
+DEBUG;2024-07-10 19:24:35;Message received from camsterrrr: !play https://www.youtube.com/watch?v=5_xKLgaCwkM
+DEBUG;2024-07-10 19:24:35;matched regex search: (?:v=|\/)([0-9A-Za-z_-]{11}).*
+DEBUG;2024-07-10 19:24:36;applying descrambler
+DEBUG;2024-07-10 19:24:36;finding initial function name
+DEBUG;2024-07-10 19:24:36;Pattern failed: ytplayer\.config\s*=\s*
+DEBUG;2024-07-10 19:24:36;Could not parse object.
+DEBUG;2024-07-10 19:24:36;finished regex search, matched: (/s/player/[\w\d]+/[\w\d_/.]+/base\.js)
+DEBUG;2024-07-10 19:24:37;finding initial function name
+DEBUG;2024-07-10 19:24:37;finished regex search, matched: (?P<sig>[a-zA-Z0-9$]+)\s*=\s*function\(\s*a\s*\)\s*{\s*a\s*=\s*a\.split\(\s*""\s*\)
+DEBUG;2024-07-10 19:24:37;getting transform plan
+DEBUG;2024-07-10 19:24:37;matched regex search: SBa=function\(\w\){[a-z=\.\(\"\)]*;(.*);(?:.+)}
+DEBUG;2024-07-10 19:24:37;getting transform object
+DEBUG;2024-07-10 19:24:37;Finding throttling function name
+DEBUG;2024-07-10 19:24:37;finished regex search, matched: \([a-z]\s*=\s*([a-zA-Z0-9$]+)(\[\d+\])?\([a-z]\)
+DEBUG;2024-07-10 19:24:37;finished regex search, matched: \([a-z]\s*=\s*([a-zA-Z0-9$]+)(\[\d+\])\([a-z]\)
+DEBUG;2024-07-10 19:24:37;Finding throttling function name
+DEBUG;2024-07-10 19:24:37;finished regex search, matched: \([a-z]\s*=\s*([a-zA-Z0-9$]+)(\[\d+\])?\([a-z]\)
+DEBUG;2024-07-10 19:24:37;finished regex search, matched: \([a-z]\s*=\s*([a-zA-Z0-9$]+)(\[\d+\])\([a-z]\)
+DEBUG;2024-07-10 19:24:37;signature found, skip decipher
+DEBUG;2024-07-10 19:24:37;signature found, skip decipher
+DEBUG;2024-07-10 19:24:37;signature found, skip decipher
+DEBUG;2024-07-10 19:24:37;signature found, skip decipher
+DEBUG;2024-07-10 19:24:37;signature found, skip decipher
+DEBUG;2024-07-10 19:24:37;signature found, skip decipher
+DEBUG;2024-07-10 19:24:37;signature found, skip decipher
+DEBUG;2024-07-10 19:24:37;signature found, skip decipher
+DEBUG;2024-07-10 19:24:37;file /tmp/Groovester/downloads/analog fade (new bule sky)  hot mulligan.mp4 already exists, skipping
+DEBUG;2024-07-10 19:24:37;download finished
+DEBUG;2024-07-10 19:24:37;!play successfully downloaded the following video: https://www.youtube.com/watch?v=5_xKLgaCwkM
+DEBUG;2024-07-10 19:24:37;Adding YouTube video URL to queue:  /tmp/Groovester/downloadsanalog fade (new bule sky) // hot mulligan
+ERROR;2024-07-10 19:24:37;Ignoring exception in on_message
+Traceback (most recent call last):
+  File "/home/jbone/.local/lib/python3.10/site-packages/discord/client.py", line 449, in _run_event
+    await coro(*args, **kwargs)
+  File "/home/jbone/onedrive/projects/Groovester/src/client.py", line 57, in on_message
+    return await groovesterEventHandler.playClientEvent(message)
+  File "/home/jbone/onedrive/projects/Groovester/src/Groovester.py", line 182, in playClientEvent
+    self.readerCv.signal()
+AttributeError: 'Condition' object has no attribute 'signal'
