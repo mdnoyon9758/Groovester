@@ -329,3 +329,168 @@ INFO;2024-07-09 06:20:32;Shard ID None has connected to Gateway (Session ID: ab1
 INFO;2024-07-09 06:20:34;Groovester started Successfully!
 DEBUG;2024-07-09 06:20:39;Message received from camsterrrr: !leave
 ERROR;2024-07-09 06:20:39;!leave failed, Groovester is not in a voice channel.
+DEBUG;2024-07-10 03:26:53;Attempting to start Groovester!
+DEBUG;2024-07-10 03:26:53;Using selector: EpollSelector
+INFO;2024-07-10 03:26:53;logging in using static token
+INFO;2024-07-10 03:26:54;Shard ID None has connected to Gateway (Session ID: c27df72f1b3d9731c662503c7e707fc8).
+INFO;2024-07-10 03:26:56;Groovester started Successfully!
+DEBUG;2024-07-10 05:58:40;Attempting to start Groovester!
+DEBUG;2024-07-10 05:58:40;Using selector: EpollSelector
+INFO;2024-07-10 05:58:40;logging in using static token
+INFO;2024-07-10 05:58:42;Shard ID None has connected to Gateway (Session ID: de4faa420deecd6044cdd7873b620a77).
+INFO;2024-07-10 05:58:44;Groovester started Successfully!
+DEBUG;2024-07-10 05:58:52;Message received from camsterrrr: !leave
+DEBUG;2024-07-10 05:59:33;Attempting to start Groovester!
+DEBUG;2024-07-10 05:59:33;Using selector: EpollSelector
+INFO;2024-07-10 05:59:33;logging in using static token
+INFO;2024-07-10 05:59:34;Shard ID None has connected to Gateway (Session ID: 235e239dbdde105d9fb705575deebafc).
+INFO;2024-07-10 05:59:36;Groovester started Successfully!
+DEBUG;2024-07-10 05:59:38;Message received from camsterrrr: !leave
+ERROR;2024-07-10 05:59:38;Ignoring exception in on_message
+Traceback (most recent call last):
+  File "/home/jbone/.local/lib/python3.10/site-packages/discord/client.py", line 449, in _run_event
+    await coro(*args, **kwargs)
+  File "/home/jbone/onedrive/projects/Groovester/src/client.py", line 185, in on_message
+    return await GroovesterEventHandler.leaveClientEvent(message)
+  File "/home/jbone/onedrive/projects/Groovester/src/Groovester.py", line 37, in leaveClientEvent
+    if not voiceClientInst == None :
+NameError: name 'voiceClientInst' is not defined
+DEBUG;2024-07-10 06:00:10;Attempting to start Groovester!
+DEBUG;2024-07-10 06:00:10;Using selector: EpollSelector
+INFO;2024-07-10 06:00:10;logging in using static token
+INFO;2024-07-10 06:00:11;Shard ID None has connected to Gateway (Session ID: be03830c9d6a947c6d86589605079217).
+INFO;2024-07-10 06:00:13;Groovester started Successfully!
+DEBUG;2024-07-10 06:00:15;Message received from camsterrrr: !leave
+ERROR;2024-07-10 06:00:15;Ignoring exception in on_message
+Traceback (most recent call last):
+  File "/home/jbone/.local/lib/python3.10/site-packages/discord/client.py", line 449, in _run_event
+    await coro(*args, **kwargs)
+  File "/home/jbone/onedrive/projects/Groovester/src/client.py", line 185, in on_message
+    return await GroovesterEventHandler.leaveClientEvent(message)
+  File "/home/jbone/onedrive/projects/Groovester/src/Groovester.py", line 37, in leaveClientEvent
+    if not self.voiceClientInst == None :
+NameError: name 'self' is not defined
+DEBUG;2024-07-10 06:01:14;Attempting to start Groovester!
+DEBUG;2024-07-10 06:01:14;Using selector: EpollSelector
+INFO;2024-07-10 06:01:14;logging in using static token
+INFO;2024-07-10 06:01:15;Shard ID None has connected to Gateway (Session ID: 79f708bc3b29d5502b2ba6d6aa32c78a).
+INFO;2024-07-10 06:01:17;Groovester started Successfully!
+DEBUG;2024-07-10 06:01:21;Message received from camsterrrr: !leave
+ERROR;2024-07-10 06:01:21;Ignoring exception in on_message
+Traceback (most recent call last):
+  File "/home/jbone/.local/lib/python3.10/site-packages/discord/client.py", line 449, in _run_event
+    await coro(*args, **kwargs)
+  File "/home/jbone/onedrive/projects/Groovester/src/client.py", line 185, in on_message
+    return await GroovesterEventHandler.leaveClientEvent(message)
+TypeError: GroovesterEventHandler.leaveClientEvent() missing 1 required positional argument: 'message'
+DEBUG;2024-07-10 06:03:52;Attempting to start Groovester!
+DEBUG;2024-07-10 06:03:52;Using selector: EpollSelector
+INFO;2024-07-10 06:03:52;logging in using static token
+INFO;2024-07-10 06:03:53;Shard ID None has connected to Gateway (Session ID: cee3ca9d052e3fcc6c732e3a83b61a02).
+INFO;2024-07-10 06:03:55;Groovester started Successfully!
+DEBUG;2024-07-10 06:04:04;Message received from camsterrrr: !leave
+ERROR;2024-07-10 06:04:04;Ignoring exception in on_message
+Traceback (most recent call last):
+  File "/home/jbone/.local/lib/python3.10/site-packages/discord/client.py", line 449, in _run_event
+    await coro(*args, **kwargs)
+  File "/home/jbone/onedrive/projects/Groovester/src/client.py", line 185, in on_message
+    await GroovesterEventHandler.leaveClientEvent(message)
+TypeError: GroovesterEventHandler.leaveClientEvent() missing 1 required positional argument: 'message'
+DEBUG;2024-07-10 06:07:11;Attempting to start Groovester!
+DEBUG;2024-07-10 06:07:11;Using selector: EpollSelector
+INFO;2024-07-10 06:07:11;logging in using static token
+INFO;2024-07-10 06:07:12;Shard ID None has connected to Gateway (Session ID: 1f259220fd62d3e0d783866e39c13520).
+INFO;2024-07-10 06:07:14;Groovester started Successfully!
+DEBUG;2024-07-10 06:07:17;Message received from camsterrrr: !leave
+ERROR;2024-07-10 06:07:17;Ignoring exception in on_message
+Traceback (most recent call last):
+  File "/home/jbone/.local/lib/python3.10/site-packages/discord/client.py", line 449, in _run_event
+    await coro(*args, **kwargs)
+  File "/home/jbone/onedrive/projects/Groovester/src/client.py", line 185, in on_message
+    await groovesterEventHandler.leaveClientEvent(message)
+  File "/home/jbone/onedrive/projects/Groovester/src/Groovester.py", line 49, in leaveClientEvent
+    log.error("!leave failed, Groovester is not in a voice channel.")
+NameError: name 'log' is not defined
+DEBUG;2024-07-10 06:11:00;Attempting to start Groovester!
+DEBUG;2024-07-10 06:11:00;Using selector: EpollSelector
+INFO;2024-07-10 06:11:00;logging in using static token
+INFO;2024-07-10 06:11:02;Shard ID None has connected to Gateway (Session ID: 243265cea452898811e4cee91bda5113).
+INFO;2024-07-10 06:11:04;Groovester started Successfully!
+DEBUG;2024-07-10 06:11:08;Message received from camsterrrr: !leave
+ERROR;2024-07-10 06:11:08;!leave failed, Groovester is not in a voice channel.
+ERROR;2024-07-10 06:11:08;Ignoring exception in on_message
+Traceback (most recent call last):
+  File "/home/jbone/.local/lib/python3.10/site-packages/discord/client.py", line 449, in _run_event
+    await coro(*args, **kwargs)
+  File "/home/jbone/onedrive/projects/Groovester/src/client.py", line 185, in on_message
+    await groovesterEventHandler.leaveClientEvent(message)
+  File "/home/jbone/onedrive/projects/Groovester/src/Groovester.py", line 53, in leaveClientEvent
+    await message.channel.send(_leaveCommandNoActiveVoiceChannel)
+NameError: name '_leaveCommandNoActiveVoiceChannel' is not defined
+DEBUG;2024-07-10 06:11:39;Attempting to start Groovester!
+DEBUG;2024-07-10 06:11:39;Using selector: EpollSelector
+INFO;2024-07-10 06:11:39;logging in using static token
+INFO;2024-07-10 06:11:40;Shard ID None has connected to Gateway (Session ID: 8b41255dba213dc0f79b3ad570bd7bcd).
+INFO;2024-07-10 06:11:42;Groovester started Successfully!
+DEBUG;2024-07-10 06:11:46;Message received from camsterrrr: !leave
+ERROR;2024-07-10 06:11:46;!leave failed, Groovester is not in a voice channel.
+DEBUG;2024-07-10 06:24:48;Attempting to start Groovester!
+DEBUG;2024-07-10 06:24:48;Using selector: EpollSelector
+INFO;2024-07-10 06:24:48;logging in using static token
+INFO;2024-07-10 06:24:49;Shard ID None has connected to Gateway (Session ID: 380aedebad95b872536235348dc355f5).
+INFO;2024-07-10 06:24:51;Groovester started Successfully!
+DEBUG;2024-07-10 06:24:54;Message received from camsterrrr: !join
+ERROR;2024-07-10 06:24:54;!join failed, author is not in a voice channel.
+ERROR;2024-07-10 06:24:54;Ignoring exception in on_message
+Traceback (most recent call last):
+  File "/home/jbone/.local/lib/python3.10/site-packages/discord/client.py", line 449, in _run_event
+    await coro(*args, **kwargs)
+  File "/home/jbone/onedrive/projects/Groovester/src/client.py", line 164, in on_message
+    return await groovesterEventHandler.joinClientEvent(message)
+  File "/home/jbone/onedrive/projects/Groovester/src/Groovester.py", line 51, in joinClientEvent
+    await message.channel.send(_joinCommandNoActiveVoiceChannel)
+NameError: name '_joinCommandNoActiveVoiceChannel' is not defined
+DEBUG;2024-07-10 06:25:14;Message received from camsterrrr: !join
+ERROR;2024-07-10 06:25:14;!join failed, author is not in a voice channel.
+ERROR;2024-07-10 06:25:14;Ignoring exception in on_message
+Traceback (most recent call last):
+  File "/home/jbone/.local/lib/python3.10/site-packages/discord/client.py", line 449, in _run_event
+    await coro(*args, **kwargs)
+  File "/home/jbone/onedrive/projects/Groovester/src/client.py", line 164, in on_message
+    return await groovesterEventHandler.joinClientEvent(message)
+  File "/home/jbone/onedrive/projects/Groovester/src/Groovester.py", line 51, in joinClientEvent
+    await message.channel.send(ErrorMessages._joinCommandNoActiveVoiceChannel)
+NameError: name '_joinCommandNoActiveVoiceChannel' is not defined
+DEBUG;2024-07-10 06:25:19;Attempting to start Groovester!
+DEBUG;2024-07-10 06:25:19;Using selector: EpollSelector
+INFO;2024-07-10 06:25:19;logging in using static token
+INFO;2024-07-10 06:25:20;Shard ID None has connected to Gateway (Session ID: f4381e55ee66ae1539ab57f32deb916e).
+INFO;2024-07-10 06:25:22;Groovester started Successfully!
+DEBUG;2024-07-10 06:25:24;Message received from camsterrrr: !join
+ERROR;2024-07-10 06:25:24;!join failed, author is not in a voice channel.
+DEBUG;2024-07-10 06:29:06;Attempting to start Groovester!
+DEBUG;2024-07-10 06:29:06;Using selector: EpollSelector
+INFO;2024-07-10 06:29:06;logging in using static token
+INFO;2024-07-10 06:29:07;Shard ID None has connected to Gateway (Session ID: 3e72f226f373b2f2c6aa7bb0d6a92de9).
+INFO;2024-07-10 06:29:09;Groovester started Successfully!
+DEBUG;2024-07-10 06:29:12;Message received from camsterrrr: !play
+ERROR;2024-07-10 06:29:12;Ignoring exception in on_message
+Traceback (most recent call last):
+  File "/home/jbone/.local/lib/python3.10/site-packages/discord/client.py", line 449, in _run_event
+    await coro(*args, **kwargs)
+  File "/home/jbone/onedrive/projects/Groovester/src/client.py", line 92, in on_message
+    return await groovesterEventHandler.playClientEvent(message)
+  File "/home/jbone/onedrive/projects/Groovester/src/Groovester.py", line 101, in playClientEvent
+    await message.channel.send(_playCommandIncorrectParameters)
+NameError: name '_playCommandIncorrectParameters' is not defined
+DEBUG;2024-07-10 06:29:41;Attempting to start Groovester!
+DEBUG;2024-07-10 06:29:41;Using selector: EpollSelector
+INFO;2024-07-10 06:29:41;logging in using static token
+INFO;2024-07-10 06:29:42;Shard ID None has connected to Gateway (Session ID: 596284107a36969b281b48795b6e9d87).
+INFO;2024-07-10 06:29:44;Groovester started Successfully!
+DEBUG;2024-07-10 06:29:46;Message received from camsterrrr: !play
+DEBUG;2024-07-10 06:33:42;Attempting to start Groovester!
+DEBUG;2024-07-10 06:33:42;Using selector: EpollSelector
+INFO;2024-07-10 06:33:42;logging in using static token
+INFO;2024-07-10 06:33:44;Shard ID None has connected to Gateway (Session ID: f616b25e496ed08ccfc6ec020a55a479).
+INFO;2024-07-10 06:33:46;Groovester started Successfully!
