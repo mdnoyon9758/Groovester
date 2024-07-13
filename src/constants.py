@@ -32,11 +32,11 @@ class ErrorMessages :
 	)
 	_playCommandIncorrectParameters = (
 	    "Incorrect !play usage...\n"
-	    + "Usage:\t !play *URL to YouTube video*"
+	    + "\t!play *URL to YouTube video*"
 	)
 	_playCommandUnreachableDomain = (
 	    "Incorrect !play usage...\n"
-	    + "Enter a valid domain."
+	    + "\tEnter a valid domain."
 	)
 	_playFailedToDownloadVideoException = (
 		"!play failed, an error has occurred while downloading the following video:"

@@ -52,7 +52,7 @@ apt install python3
 You can install all of the Python modules via the Python package manager.
 
 ```bash
-pip install --upgrade Discord.py pytube python-dotenv validators pynacl
+pip install --upgrade Discord.py pytube python-dotenv validators pynacl ffmpeg		
 ```
 
 ### Step 1: Cloning
