@@ -1,26 +1,24 @@
 import os
+from Threading import Condition
+from time import sleep
 
 from src.Groovester import downloadYouTubeVideo, GroovesterEventHandler
 
 LIMIT_OF_SONGS_TO_DOWNLOAD = 10
 
-def acquireReaderLock(
-	handler: GroovesterEventHandler
-) :
+def acquireReaderLock(handler: GroovesterEventHandler) :
 	with handler.readerCv :
 		while ( # Fall through if there are no active readers or writers.
-	        handler.numReaders > 0
-	        or handler.numWriters > 0
-	        or handler.listOfDownloadedSongsToPlay.size() == 0
-	    ) :
-	        handler.readerCv.wait()
-	    handler.numReaders = handler.numReaders + 1
+      handler.numReaders > 0
+      or handler.numWriters > 0
+      or handler.listOfDownloadedSongsToPlay.size() == 0
+    ) :
+      handler.readerCv.wait()
+      handler.numReaders = handler.numReaders + 1
 
-    return True
+  return True
 
-def acquireWriterLock(
-	handler: GroovesterEventHandler
-) :
+def acquireWriterLock(handler: GroovesterEventHandler) :
 	# Acquire lock and await signal.
     with handler.writerCv :
         while ( # Fall through if there are no active readers or writers.
@@ -32,33 +30,23 @@ def acquireWriterLock(
 
     return True
 
-def releaseReaderLock(
-	handler: GroovesterEventHandler, 
-	readerCv: Condition,
-	writerCv: Condition
-) :
+def releaseReaderLock(handler: GroovesterEventHandler) :
 	with readerCv :
 		handler.numReaders = handler.numReaders - 1
-		readerCv.notify()
-		writerCv.notify()
+		handler.readerCv.notify()
+		handler.writerCv.notify()
 
 	return True
 
-def releaseWritererLock(
-	handler: GroovesterEventHandler, 
-	readerCv: Condition,
-	writerCv: Condition
-) :
+def releaseWritererLock(handler: GroovesterEventHandler) :
 	with readerCv :
 		handler.numWriters = handler.numWriters - 1
-		readerCv.notify()
-		writerCv.notify()
+		handler.readerCv.notify()
+		handler.writerCv.notify()
 
 	return True
 
-def checkSongsInQueueExistOnFileSystem(
-	handler: GroovesterEventHandler
-) :
+def checkSongsInQueueExistOnFileSystem(handler: GroovesterEventHandler) :
 	""" 
 		Thread that executes every 10 seconds and verifies the next ten 
 			songs exist on the local file system. If not, it downloads 
@@ -100,3 +88,37 @@ def checkSongsInQueueExistOnFileSystem(
 	return True
 
 #! Get signaled 
+def playDownloadedSongViaDiscordAudio(handler: GroovesterEventHandler) :
+	queue = handler.listOfDownloadedSongsToPlay
+
+	while True :
+
+		#! Todo: Check that there are songs in the queue.
+		if not len(queue) < 0 :
+			handler.readerCv.wait()
+
+		#! Todo: Check that Groovester is in a voice channel.
+		if not True :
+			pass
+
+	    acquireWriterLock(handler)
+
+	    # Store absolute path to downloaded song to play and remove it from queue.
+	    absPathToDownloadedVideoToPlay = queue[0]
+	    handler.listOfDownloadedSongsToPlay = queue[1:]
+
+	    releaseWriteerLock(handler)
+
+	    # Play song through the Discord voice channel.
+	    absPathToDownloadedVideoToPlay.playDiscordAudio(absPathToDownloadedVideoToPlay)
+
+	    # Delete the downloaded file after song ends.
+	    if os.path.exists(absPathToDownloadedVideoToPlay) :
+	        try :
+	            os.rm(absPathToDownloadedVideoToPlay)
+	        except OSError as err :
+	            log.error(err)
+
+	            return False
+
+    return True

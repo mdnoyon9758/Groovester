@@ -4,7 +4,7 @@ import logging as log
 import os
 from threading import Condition, Lock, Thread
 
-from discord import AudioSource, DiscordException, FFmpegPCMAudio
+import discord
 from pytube import YouTube
 from validators import url
 
@@ -19,10 +19,11 @@ def downloadYouTubeVideo(
     linkToYouTubeVideo: str
 ) :
     #* Todo: Ensure that the local file system has enough space for the video.
+    ytObj = YouTube(linkToYouTubeVideo)
+    audioStream = ytObj.streams.get_audio_only() # Only download audio, saves as .mp4
+
+    # Download video via pytube API.
     try :
-        ytObj = YouTube(linkToYouTubeVideo)
-        # Download video via pytube API.
-        audioStream = ytObj.streams.get_audio_only()
         audioStream.download()
         log.debug(
             "%s %s", 
@@ -35,13 +36,15 @@ def downloadYouTubeVideo(
             ErrorMessages._playFailedToDownloadVideoException, 
             err
         )
+        return None
+    except Exception as err :
+        log.error(err)
+        return None
 
-        return False
-
-    return True
+    return ytObj
 
 #* Todo: Pass system argument to identify if OS is Linux or Windows. Helps setup FS.
-#* Todo: Create a thread that goes through and verifies the videos stored in /tmp are still there. 
+#* Todo: Create a thread that goes through and verifies the videos stored in /tmp are still there.
 #*      Compare against list.
 def setupTmpDirectory() :
     """ Used to setup the directory to store YouTube videos. """
@@ -56,8 +59,10 @@ def setupTmpDirectory() :
             os.mkdir(absPathGroovester)
         except OSError as err :
             log.error(err)
-
             return False
+        except Exception as err :
+                log.error(err)
+                return False
 
     absPathGroovester = (
         absPathGroovester + "/downloads"
@@ -67,8 +72,10 @@ def setupTmpDirectory() :
             os.mkdir(absPathGroovester)
         except OSError as err :
             log.error(err)
-
             return False
+        except Exception as err :
+                log.error(err)
+                return False
 
     os.chdir(absPathGroovester)
 
@@ -77,8 +84,6 @@ def setupTmpDirectory() :
 class GroovesterEventHandler :
 
     def __init__(self) :
-
-        """ MEMBER VARIABLES """
 
         # List to store absolute path of audio files to play.
         self.listOfDownloadedSongsToPlay = []
@@ -92,6 +97,7 @@ class GroovesterEventHandler :
         self.readerCv = Condition(lock=self._readerLock)
         self.writerCv = Condition(lock=self._writerLock)
 
+        self.audioSource = None
         self.voiceClient = None
 
     async def joinClientEvent(self, message) :
@@ -107,16 +113,15 @@ class GroovesterEventHandler :
                     channel.name, 
                     channel.id
                 )
-
-                await self.playDiscordAudio("", message.channel)
+            except discord.ClientException as err :
+                log.error(err)
+                return False
             except Exception as err :
                 log.error(err)
-
                 return False
         else :
             log.error("!join failed, author is not in a voice channel.")
             await message.channel.send(ErrorMessages._joinCommandNoActiveVoiceChannel)
-
             return False
 
         #* Todo: Send a list of useful commands to the text channel.
@@ -137,12 +142,14 @@ class GroovesterEventHandler :
                     self.voiceClient = await self.voiceClient.disconnect()
                     log.debug(
                         "!leave successfully disconnected from the voice channel: %s (ID: %s)", 
-                        channel.name, 
+                        channel.name,
                         channel.id
                     )
+                except discord.ClientException as err :
+                    log.error(err)
+                    return False
                 except Exception as err :
                     log.error(err)
-
                     return False
         else :
             log.error("!leave failed, Groovester is not in a voice channel.")
@@ -168,26 +175,23 @@ class GroovesterEventHandler :
             linkToYouTubeVideo = message.content.split(" ")[1]
         else :
             await message.channel.send(ErrorMessages._playCommandIncorrectParameters)
-
             return False
 
         # Check domain is what is expected.
         if not linkToYouTubeVideo.startswith("https://www.youtube.com/") :
             await message.channel.send(ErrorMessages._playCommandIncorrectDomain)
-
             return False
 
         # Test if the Domain is reachable and valid. (Emphasis on Domain)
         if not url(linkToYouTubeVideo) :
             await message.channel.send(ErrorMessages._playCommandUnreachableDomain)
-
             return False
 
-        #! Todo: Add logic to limit the number of downlaoded videos to ten.
+        #! Todo: Add logic to limit the number of downloaded videos to ten.
         # Download the YouTube video.
-        if not downloadYouTubeVideo(linkToYouTubeVideo) :
+        ytObj = downloadYouTubeVideo(linkToYouTubeVideo)
+        if ytObj is None :
             await message.channel.send("Groovester failed to download the requested video!")
-
             return False
 
         # Acquire lock and await signal.
@@ -217,9 +221,19 @@ class GroovesterEventHandler :
                 self.readerCv.notify()
             self.writerCv.notify()
 
-    async def playDiscordAudio(self, absPathToSongToPlay, channel) :
+    async def speakInVoiceChannel(self, channel) :
+        absPathToSongToPlay = self.listOfDownloadedSongsToPlay[0]
+      
         await channel.send("Let's play some audio!")
-        audioSource = FFmpegPCMAudio("/tmp/Groovester/downloads/analog fade (new bule sky)  hot mulligan.mp4") # /tmp/Groovester/downloads/analog fade (new bule sky)  hot mulligan.mp4
+        # ffmpegKwargs = { # Optimized settings for ffmpeg for audio streaming, https://stackoverflow.com/questions/75493436/why-is-the-ffmpeg-process-in-discordpy-terminating-without-playing-anything
+        # #   'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
+        #   'options': '-vn -filter:a "volume=0.75"'
+        # }
+        self.audioSource = discord.FFmpegOpusAudio(
+          executable = "/usr/bin/ffmpeg",
+          source = absPathToSongToPlay
+        )
+        log.debug(self.audioSource)
 
         # Check that bot is in voice channel.
         if not self.voiceClient.is_connected() :
@@ -230,12 +244,12 @@ class GroovesterEventHandler :
             await channel.send(
                 "Groovester failed to play audio! "
                 + "Groovester has not connected to a voice channel yet!\n"
-                + "Please issue the !join command while in a voice channel..."
+                + "Please issue the !join command while connected to a voice channel..."
             )
-
             return False
 
-        if not self.voiceClient.is_playing() :
+        # Check if Groovester is already playing a song.
+        if self.voiceClient.is_playing() :
             log.error(
                 "Groovester failed to play audio! "
                 + "Groovester is already playing audio!"
@@ -245,7 +259,6 @@ class GroovesterEventHandler :
                 + "Groovester is already playing audio!\n"
                 + "Please wait for the current song to end..."
             )
-
             return False
 
         try :
@@ -253,52 +266,41 @@ class GroovesterEventHandler :
                 "Attempting to play audio source: %s", 
                 absPathToSongToPlay
             )
-            self.voiceClient.play(audioSource, after=None)
+            self.voiceClient.play(self.audioSource)
             log.debug(
                 "Groovester successfully played an audio source: %s", 
                 absPathToSongToPlay
             )
-
-        except DiscordException as err :
+        except discord.ClientException as err :
+            self.voiceClient.stop()
             log.error(err)
             await channel.send(
-                "An exception was caught while Groovester was play audio."
+                "An exception was caught while Groovester was playing audio, see Groovester.log for details."
             )
-
             return False
-
+          
         return True
 
-    def playDownloadedSongViaDiscordAudio(self) :
+    async def stopClientEvent(self, channel) :
+        
+        if self.voiceClient is not None :
+            if not self.voiceClient.is_connected() :
+                await channel.send(
+                    "Groovester is not in a voice channel!"
+                )
+                return False
+            if not self.voiceClient.is_playing() :
+                await channel.send(
+                    "Groovester is not playing audio!"
+                )
+                return False
 
-        with readerCv :
-            while ( # Fall through if there are no active readers or writers.
-                self.numReaders > 0
-                or self.numWriters > 0
-                or self.listOfDownloadedSongsToPlay.size() == 0
-            ) :
-                readerCv.wait()
-            numReaders = numReaders + 1
+            self.voiceClient.stop()
 
-            # Store absolute path to downloaded song to play
-            tempAbsPathToDownloadedVideoToPlay = ""
-            tempAbsPathToDownloadedVideoToPlay = self.listOfDownloadedSongsToPlay[0]
-            self.listOfDownloadedSongsToPlay = self.listOfDownloadedSongsToPlay[1:]
-
-            self.numReaders = self.numReaders - 1
-            with self.writerCv :
-                self.writerCv.notify()
-
-            # Play song through the Discord voice channel.
-            playDiscordAudio(tempAbsPathToDownloadedVideoToPlay)
-
-            # Delete the downloaded file after song ends.
-            if os.path.exists(tempAbsPathToDownloadedVideoToPlay) :
-                try :
-                    os.rm(tempAbsPathToDownloadedVideoToPlay)
-                except OSError as err :
-                    log.error(err)
-
-                    return False
+        else : 
+            await channel.send(
+                    "Groovester's Discord voice client instance hasn't been started!"
+            )
+            return False
 
         return True

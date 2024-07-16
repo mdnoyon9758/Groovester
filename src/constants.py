@@ -16,7 +16,7 @@ class DebugMessages :
 class ErrorMessages :
 
 	_clientRunException = (
-		"An err occurred while trying to start the Groovster client: "
+		"An err occurred while trying to start the Groovester client: "
 	)
 	_joinCommandNoActiveVoiceChannel = (
 	    "Incorrect !join usage...\n"

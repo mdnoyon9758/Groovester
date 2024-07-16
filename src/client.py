@@ -24,7 +24,7 @@ async def on_ready() :
     """ Prints message when Groovester successfully starts. """
 
     log.info("%s", InfoMessages._groovesterStartedSuccessfully)
-    print("%s", InfoMessages._groovesterStartedSuccessfully)
+    print(InfoMessages._groovesterStartedSuccessfully)
 
     return True
 
@@ -52,6 +52,9 @@ async def on_message(message) : # Message procedure
     # !play: Downloads video to local file system and enrolls song in queue.
     elif message.content.startswith("!play") :
         return await GROOVESTER_EVENT_HANDLER.playClientEvent(message)
+
+    elif message.content == "!stop" :
+        return await GROOVESTER_EVENT_HANDLER.stopClientEvent(message.channel)
 
     #* Todo: !clear, which clears the queue and deletes any downloaded videos.
     elif message.content == "!clear" :
