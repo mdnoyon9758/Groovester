@@ -1,5 +1,6 @@
 """ LIBRARIES """
 
+import asyncio
 import logging as log
 import os
 from threading import Thread
@@ -21,6 +22,14 @@ client = Client(intents=intents)
 GROOVESTER_EVENT_HANDLER = None
 
 
+def runPlaySongsInDiscordAudioThread():
+    asyncio.run(
+        playDownloadedSongViaDiscordAudio(
+            GROOVESTER_EVENT_HANDLER,
+        )
+    )
+
+
 @client.event
 async def on_ready():
     """Prints message when Groovester successfully starts and starts helper threads."""
@@ -30,7 +39,7 @@ async def on_ready():
 
     # Start various helper threads.
     playSongsInDiscordAudioThread = Thread(
-        target=playDownloadedSongViaDiscordAudio, args=(GROOVESTER_EVENT_HANDLER,)
+        target=runPlaySongsInDiscordAudioThread, args=()
     )
     try:
         playSongsInDiscordAudioThread.start()

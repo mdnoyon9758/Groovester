@@ -119,6 +119,9 @@ class GroovesterEventHandler:
             await message.channel.send(ErrorMessages._joinCommandNoActiveVoiceChannel)
             return False
 
+        with self.readerCv:
+            self.readerCv.notify()
+
         # * Todo: Send a list of useful commands to the text channel.
         await message.channel.send(
             "!join successfully completed, here are some useful commands to get you started: "
@@ -210,10 +213,10 @@ class GroovesterEventHandler:
                 self.readerCv.notify()
             self.writerCv.notify()
 
-    async def speakInVoiceChannel(self, channel):
+    async def speakInVoiceChannel(self):
         absPathToSongToPlay = self.listOfDownloadedSongsToPlay[0]
 
-        await channel.send("Let's play some audio!")
+        await self.lastChannelCommandWasEntered.send("Let's play some audio!")
         # ffmpegKwargs = { # Optimized settings for ffmpeg for audio streaming, https://stackoverflow.com/questions/75493436/why-is-the-ffmpeg-process-in-discordpy-terminating-without-playing-anything
         # #   'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
         #   'options': '-vn -filter:a "volume=0.75"'
@@ -229,7 +232,7 @@ class GroovesterEventHandler:
                 "Groovester failed to play audio! "
                 + "Groovester has not connected to a voice channel yet!"
             )
-            await channel.send(
+            await self.lastChannelCommandWasEntered.send(
                 "Groovester failed to play audio! "
                 + "Groovester has not connected to a voice channel yet!\n"
                 + "Please issue the !join command while connected to a voice channel..."
@@ -242,7 +245,7 @@ class GroovesterEventHandler:
                 "Groovester failed to play audio! "
                 + "Groovester is already playing audio!"
             )
-            await channel.send(
+            await self.lastChannelCommandWasEntered.send(
                 "Groovester failed to play audio! "
                 + "Groovester is already playing audio!\n"
                 + "Please wait for the current song to end..."
@@ -259,7 +262,7 @@ class GroovesterEventHandler:
         except discord.ClientException as err:
             self.voiceClient.stop()
             log.error(err)
-            await channel.send(
+            await self.lastChannelCommandWasEntered.send(
                 "An exception was caught while Groovester was playing audio, see Groovester.log for details."
             )
             return False
