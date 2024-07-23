@@ -1,5 +1,3 @@
-""" LIBRARIES """
-
 import asyncio
 import logging as log
 import os
@@ -10,7 +8,8 @@ from dotenv import load_dotenv
 
 from src._logging_ import configureProjectLogging
 from src.constants import ClientMessages, DebugMessages, ErrorMessages, InfoMessages
-from src.Groovester import setupTmpDirectory, GroovesterEventHandler
+from src.helpers import setupTmpDirectory
+from src.Groovester import GroovesterEventHandler
 from src.threads import playDownloadedSongViaDiscordAudio
 
 
@@ -23,6 +22,10 @@ GROOVESTER_EVENT_HANDLER = None
 
 
 def runPlaySongsInDiscordAudioThread():
+    """
+    Function used to start a new thread. This was needed because the
+        "playDownloadedSongViaDiscordAudio" is asynchronous.
+    """
     asyncio.run(
         playDownloadedSongViaDiscordAudio(
             GROOVESTER_EVENT_HANDLER,
@@ -78,19 +81,19 @@ async def on_message(message):  # Message procedure
     elif message.content == "!stop":
         return await GROOVESTER_EVENT_HANDLER.stopClientEvent(message.channel)
 
-    # * Todo: !clear, which clears the queue and deletes any downloaded videos.
+    #! Todo: !clear, which clears the queue and deletes any downloaded videos.
     elif message.content == "!clear":
         pass
 
-    # * Todo: !next, skips to the next song and deletes the current song being played.
+    #! Todo: !next, skips to the next song and deletes the current song being played.
     elif message.content == "!next":
         pass
 
-    # * Todo: !pause, which pauses the audio the bot is playing.
+    #! Todo: !pause, which pauses the audio the bot is playing.
     elif message.content == "!pause":
         pass
 
-    # * Todo: !queue, list the items stored in queue.
+    #! Todo: !queue, list the items stored in queue.
     elif message.content == "!queue":
         pass
 
@@ -98,6 +101,7 @@ async def on_message(message):  # Message procedure
 
 
 if __name__ == "__main__":
+    """Start point for the Groovester application."""
 
     GROOVESTER_EVENT_HANDLER = GroovesterEventHandler()
     configureProjectLogging()

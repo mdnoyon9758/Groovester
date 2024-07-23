@@ -60,8 +60,8 @@ def releaseWriterLock(handler: GroovesterEventHandler):
 def checkSongsInQueueExistOnFileSystem(handler: GroovesterEventHandler):
     """
     Thread that executes every 10 seconds and verifies the next ten
-            songs exist on the local file system. If not, it downloads
-            them.
+        songs exist on the local file system. If not, it downloads
+        them.
     """
 
     queue = handler.listOfDownloadedSongsToPlay
@@ -88,7 +88,7 @@ def checkSongsInQueueExistOnFileSystem(handler: GroovesterEventHandler):
                 if not os.path.exists(queue[idx]):
                     #! Todo: invoke download video function.
                     #! Todo: Add new class to track URL and absolute file path
-                    # 	on local file system.
+                    #! 	on local file system.
                     downloadYouTubeVideo("")
 
         # Unclaim reader lock and signal readers and writers.
@@ -101,6 +101,10 @@ def checkSongsInQueueExistOnFileSystem(handler: GroovesterEventHandler):
 
 # Get signaled to play audio in a Discord channel.
 async def playDownloadedSongViaDiscordAudio(handler: GroovesterEventHandler):
+    """
+    Thread that is used to stream audio when Groovester is in a voice channel.
+        If there is no song to play, it awaits a signal from client thread.
+    """
     log.info("playSongsInDiscordAudioThread has started!")
 
     queue = handler.listOfDownloadedSongsToPlay
@@ -110,7 +114,7 @@ async def playDownloadedSongViaDiscordAudio(handler: GroovesterEventHandler):
         # Spin lock until various conditions are met.
         with handler.readerCv:
             # Check that there are songs in the queue.
-            while len(queue) <= 0:
+            while len(queue) == 0:
                 log.debug("Giving up time slice, waiting for songs in queue.")
                 handler.readerCv.wait()
             # Check if the Voice Cleint has been instantiated.
@@ -148,7 +152,7 @@ async def playDownloadedSongViaDiscordAudio(handler: GroovesterEventHandler):
         releaseReaderLock(handler)
 
         # Play song through the Discord voice channel.
-        await handler.speakInVoiceChannel()
+        await handler.speakInVoiceChannel(absPathToDownloadedVideoToPlay)
 
         # Delete the downloaded file after song ends.
         if os.path.exists(absPathToDownloadedVideoToPlay):
