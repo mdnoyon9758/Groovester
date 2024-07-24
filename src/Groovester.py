@@ -5,7 +5,7 @@ import discord
 from validators import url
 
 from src.constants import ClientMessages, DebugMessages, ErrorMessages, InfoMessages
-from src.helpers import downloadYouTubeVideo
+from src.helpers import downloadYouTubeAudio, PyTube
 
 log.getLogger(__name__)  # Set same logging parameters as client.py.
 
@@ -127,12 +127,14 @@ class GroovesterEventHandler:
 
         #! Todo: Add logic to limit the number of downloaded videos to ten.
         # Download the YouTube video.
-        absPathToDownloadedVideo = downloadYouTubeVideo(linkToYouTubeVideo)
-        if absPathToDownloadedVideo is None:
+        pytubeObj = downloadYouTubeAudio(linkToYouTubeVideo)
+        if pytubeObj is None:
             await message.channel.send(
                 "Groovester failed to download the requested video!"
             )
             return False
+
+        #! Todo: Escape special characters in the file's name.
 
         # Acquire lock and await signal.
         with self.writerCv:
@@ -144,9 +146,9 @@ class GroovesterEventHandler:
             self.numWriters = self.numWriters + 1
 
             # Enter mutual exclusion and add song to queue.
-            self.listOfDownloadedSongsToPlay.append(absPathToDownloadedVideo)
+            self.listOfDownloadedSongsToPlay.append(pytubeObj)
             log.debug(
-                "%s %s", DebugMessages._playAddingVideoToQueue, absPathToDownloadedVideo
+                "%s %s", DebugMessages._playAddingVideoToQueue, pytubeObj.absPathToFile
             )
 
             self.numWriters = self.numWriters - 1
@@ -154,6 +156,51 @@ class GroovesterEventHandler:
             with self.readerCv:
                 self.readerCv.notify()
             self.writerCv.notify()
+
+    #! Todo: I think it would be better to stream the song instead of download it to the filesystem.
+    async def speakInVoiceChannel(self, absPathToVideoToPlay: str):
+        """Function used to allow Groovester to stream audio to the voice channel."""
+
+        # await self.lastChannelCommandWasEntered.send("Let's play some audio!")
+        # ffmpegKwargs = { # Optimized settings for ffmpeg for audio streaming, https://stackoverflow.com/questions/75493436/why-is-the-ffmpeg-process-in-discordpy-terminating-without-playing-anything
+        # #   'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
+        #   'options': '-vn -filter:a "volume=0.75"'
+        # }
+        #! Todo: Optimize settings for crisp audio streaming.
+        self.audioSource = discord.FFmpegOpusAudio(
+            executable="/usr/bin/ffmpeg", source=absPathToVideoToPlay
+        )
+        log.debug(self.audioSource)
+
+        # Check that bot is in voice channel.
+        if not self.voiceClient.is_connected():
+            log.error(
+                "Groovester failed to play audio! "
+                + "Groovester has not connected to a voice channel yet!"
+            )
+            return False
+
+        # Check if Groovester is already playing a song.
+        if self.voiceClient.is_playing():
+            log.error(
+                "Groovester failed to play audio! "
+                + "Groovester is already playing audio!"
+            )
+            return False
+
+        try:
+            log.debug("Attempting to play audio source: %s", absPathToVideoToPlay)
+            self.voiceClient.play(self.audioSource)
+            log.debug(
+                "Groovester successfully played an audio source: %s",
+                absPathToVideoToPlay,
+            )
+        except discord.ClientException as err:
+            self.voiceClient.stop()
+            log.error(err)
+            return False
+
+        return True
 
     async def stopClientEvent(self, channel):
         """Helper function, used to stop Groovester from streaming audio to the voice channel."""

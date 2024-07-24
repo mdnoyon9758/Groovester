@@ -3,7 +3,8 @@ import logging as log
 from threading import Condition
 from time import sleep
 
-from src.Groovester import downloadYouTubeVideo, GroovesterEventHandler
+from src.Groovester import GroovesterEventHandler
+from src.helpers import downloadYouTubeAudio
 
 log.getLogger(__name__)  # Set same logging parameters as client.py.
 
@@ -89,7 +90,7 @@ def checkSongsInQueueExistOnFileSystem(handler: GroovesterEventHandler):
                     #! Todo: invoke download video function.
                     #! Todo: Add new class to track URL and absolute file path
                     #! 	on local file system.
-                    downloadYouTubeVideo("")
+                    downloadYouTubeAudio("")
 
         # Unclaim reader lock and signal readers and writers.
         releaseReaderLock(handler)
@@ -118,6 +119,7 @@ async def playDownloadedSongViaDiscordAudio(handler: GroovesterEventHandler):
                 log.debug("Giving up time slice, waiting for songs in queue.")
                 handler.readerCv.wait()
             # Check if the Voice Cleint has been instantiated.
+            #! Todo: User can get past this check, then crash the program by issuing the !leave command.
             while handler.voiceClient is None:
                 log.debug(
                     "Giving up time slice, waiting for voice client to instantiate."
@@ -146,7 +148,7 @@ async def playDownloadedSongViaDiscordAudio(handler: GroovesterEventHandler):
         # At this point, Groovester can start playing audio.
 
         # Store absolute path to downloaded song to play and remove it from queue.
-        absPathToDownloadedVideoToPlay = queue[0]
+        absPathToDownloadedVideoToPlay = queue[0].absPathToFile
         handler.listOfDownloadedSongsToPlay = queue[1:]
 
         releaseReaderLock(handler)
@@ -158,6 +160,10 @@ async def playDownloadedSongViaDiscordAudio(handler: GroovesterEventHandler):
         if os.path.exists(absPathToDownloadedVideoToPlay):
             try:
                 os.remove(absPathToDownloadedVideoToPlay)
+                log.debug(
+                    "Successfully deleted the following file: %s",
+                    absPathToDownloadedVideoToPlay,
+                )
             except OSError as err:
                 log.error(err)
                 return False
