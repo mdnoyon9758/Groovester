@@ -27,7 +27,7 @@ def downloadYouTubeAudio(linkToYouTubeVideo: str):
     # Download video via pytube API.
     try:
         absPathToDownloadedVideo = audioStream.download(
-            filename=(str(fileSequence) + ".mp4")
+            filename=(str(fileSequence))
         )
     except OSError as err:
         log.error("%s %s", ErrorMessages._playFailedToDownloadVideoException, err)

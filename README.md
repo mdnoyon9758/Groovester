@@ -1,6 +1,6 @@
 # Groovester
 
-Want a groovy Discord voice channel? Groovester is a Discord Application that can build up a queue of song requests, join Discord voice channels, and play requested song for all to enjoy!
+Want a groovy Discord voice channel? Groovester is a Discord Application that can build up a queue of song requests, join Discord voice channels, and play requested songs for all to enjoy!
 
 ## Groovester's Commands
 

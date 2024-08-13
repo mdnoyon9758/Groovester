@@ -156,6 +156,8 @@ async def playDownloadedSongViaDiscordAudio(handler: GroovesterEventHandler):
         # Play song through the Discord voice channel.
         await handler.speakInVoiceChannel(absPathToDownloadedVideoToPlay)
 
+        sleep(2)
+
         # Delete the downloaded file after song ends.
         if os.path.exists(absPathToDownloadedVideoToPlay):
             try:

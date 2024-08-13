@@ -168,9 +168,8 @@ class GroovesterEventHandler:
         # }
         #! Todo: Optimize settings for crisp audio streaming.
         self.audioSource = discord.FFmpegOpusAudio(
-            executable="/usr/bin/ffmpeg", source=absPathToVideoToPlay
+            executable="/usr/bin/ffmpeg", source=absPathToVideoToPlay.strip()
         )
-        log.debug(self.audioSource)
 
         # Check that bot is in voice channel.
         if not self.voiceClient.is_connected():
