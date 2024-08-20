@@ -1,4 +1,5 @@
 .env
 Groovester.log
-src/_pycache_
-var
+src/__pycache__/
+tmp/
+.vscode/

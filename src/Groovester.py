@@ -1,61 +1,18 @@
-""" LIBRARIES """
-
 import logging as log
-import os
-from pytube import YouTube
-from threading import Condition, Lock, Thread
+from threading import Condition, Lock
+
+import discord
 from validators import url
 
 from src.constants import ClientMessages, DebugMessages, ErrorMessages, InfoMessages
+from src.helpers import downloadYouTubeAudio, PyTube
 
-absPathGroovester = None
-log.getLogger(__name__) # Set same logging parameters as client.py.
-
-
-""" FUNCTIONS """
-
-#* Todo: Pass system argument to identify if OS is Linux or Windows. Helps setup FS.
-#* Todo: Create a thread that goes through and verifies the videos stored in /tmp are still there. Compare against list.
-def setupTmpDirectory() :
-    global absPathGroovester
-    absPathGroovester = ""
-
-    absPathGroovester = (
-        absPathGroovester + "/tmp/Groovester"
-    )
-    if not os.path.exists(absPathGroovester) :
-        try :
-            os.mkdir(absPathGroovester)
-        except OSError as err :
-            log.error(err)
-
-            return False  
-
-    absPathGroovester = (
-        absPathGroovester + "/downloads"
-    )
-    if not os.path.exists(absPathGroovester) : 
-        try :
-            os.mkdir(absPathGroovester)
-        except OSError as err :
-            log.error(err) 
-
-            return False
-
-    os.chdir(absPathGroovester)
-
-    return True
+log.getLogger(__name__)  # Set same logging parameters as client.py.
 
 
-""" CLASSES """
+class GroovesterEventHandler:
 
-class GroovesterEventHandler :
-
-    """ CONSTRUCTOR """
-
-    def __init__(self) :
-
-        """ MEMBER VARIABLES """
+    def __init__(self):
 
         # List to store absolute path of audio files to play.
         self.listOfDownloadedSongsToPlay = []
@@ -64,65 +21,84 @@ class GroovesterEventHandler :
         # Either one reader or one writer at a time.
         self.numReaders = 0
         self.numWriters = 0
-        self._readerLock = Lock() # Used when the Discord bot will load next song to local variable.
-        self._writerLock = Lock() # Used when commands like "!play" are issued.
+        self._readerLock = (
+            Lock()
+        )  # Used when the Discord bot will load next song to local variable.
+        self._writerLock = Lock()  # Used when commands like "!play" are issued.
         self.readerCv = Condition(lock=self._readerLock)
         self.writerCv = Condition(lock=self._writerLock)
 
-        self.voiceClientInst = None
+        self.audioSource = None
+        self.voiceClient = None
 
+        self.lastChannelCommandWasEntered = None
 
-    """ MEMBER FUNCTIONS """
+    async def joinClientEvent(self, message):
+        """Client event, which is used to connect Groovester to a Voice Channel."""
 
-    async def joinClientEvent(self, message) :
         # Validate author is in a voice channel.
-        if message.author.voice :
+        if message.author.voice:
             # Connect Groovester to voice channel.
-            try :
-                channel = message.author.voice.channel
-                self.voiceClientInst = await channel.connect() 
-                log.debug(f"!join successfully connected to the voice channel: {channel.name} (ID: {channel.id})")
-            except Exception as err :
+            try:
+                voiceChannel = message.author.voice.channel
+                self.voiceClient = await voiceChannel.connect()
+                log.debug(
+                    "%s %s", InfoMessages._logConnectedToVoiceChannel, voiceChannel.name
+                )
+            except discord.ClientException as err:
                 log.error(err)
-
                 return False
-        else :
-            log.error("!join failed, author is not in a voice channel.")
-            await message.channel.send(ErrorMessages._joinCommandNoActiveVoiceChannel)
-
+            except Exception as err:
+                log.error(err)
+                return False
+        else:
+            log.error(ErrorMessages._logJoinCmdAuthorNotInVoiceChannel)
+            await message.channel.send(ErrorMessages._sendJoinCmdNoActiveVoiceChannel)
             return False
 
-        #* Todo: Send a list of useful commands to the text channel.
-        await message.channel.send("!join successfully completed, here are some useful commands to get you started: ")
+        with self.readerCv:
+            self.readerCv.notify()
+
+        await message.channel.send(
+            InfoMessages._sendJoinCmdSuccessfulVoiceClientConnect
+        )
 
         return True
 
-    async def leaveClientEvent(self, message) :
+    async def leaveClientEvent(self, message):
+        """Client event, which is used to disconnect Groovester from a Voice Channel."""
 
-        # Validate Groovester is in a voice channel
-        if not self.voiceClientInst == None :
+        # Validate Groovester is in a voice channel.
+        if not self.voiceClient == None:
             # If connected to a voice channel, disconnect Groovester.
-            if self.voiceClientInst.is_connected() :
-                try :
-                    channel = message.author.voice.channel
-                    self.voiceClientInst = await self.voiceClientInst.disconnect() 
-                    log.debug(f"!leave successfully disconnected from the voice channel: {channel.name} (ID: {channel.id})")
-                except Exception as err :
+            if self.voiceClient.is_connected():
+                try:
+                    voiceChannel = message.author.voice.channel
+                    self.voiceClient = await self.voiceClient.disconnect()
+                    log.debug(
+                        "%s %s", InfoMessages._logDisconnectedFromVoiceChannel, voiceChannel.name
+                    )
+                except discord.ClientException as err:
                     log.error(err)
-
                     return False
-        else :
-            log.error("!leave failed, Groovester is not in a voice channel.")
-            await message.channel.send(ErrorMessages._leaveCommandNoActiveVoiceChannel)
+                except Exception as err:
+                    log.error(err)
+                    return False
+        else:
+            log.error(ErrorMessages._logLeaveCmdNoActiveVoiceChannel)
+            await message.channel.send(ErrorMessages._sendLeaveCmdNoActiveVoiceChannel)
 
             return False
 
-        await message.channel.send("Bye, bye! :(")
-        #* Todo: print the number of songs still in queue.
+        await message.channel.send(
+            InfoMessages._sendLeaveCmdLeaveVoiceChannel
+        )
+        #! Todo: print the number of songs still in queue.
 
         return True
 
-    async def playClientEvent(self, message) :
+    async def playClientEvent(self, message):
+        """Client event to download a song and place it in the queue."""
 
         # Input validation.
 
@@ -130,89 +106,114 @@ class GroovesterEventHandler :
         linkToYouTubeVideo = str(message.content)
 
         # Ensure format of "!play " (emphasis on ' '), not "!play-" or "!play#"
-        if (len(message.content) > 5 
-            and linkToYouTubeVideo[5] == " ") : 
+        if len(message.content) > 5 and linkToYouTubeVideo[5] == " ":
             linkToYouTubeVideo = message.content.split(" ")[1]
-        else :
-            await message.channel.send(ErrorMessages._playCommandIncorrectParameters)
+        else:
+            await message.channel.send(ErrorMessages._sendPlayCmdIncorrectParameters)
             return False
 
-        # Check domain is what is expected. 
-        if not linkToYouTubeVideo.startswith("https://www.youtube.com/") :
-            await message.channel.send(ErrorMessages._playCommandIncorrectDomain)
+        # Check domain is what is expected.
+        if not linkToYouTubeVideo.startswith("https://www.youtube.com/"):
+            await message.channel.send(ErrorMessages._sendPlayCmdIncorrectDomain)
             return False
 
         # Test if the Domain is reachable and valid. (Emphasis on Domain)
-        if not url(linkToYouTubeVideo) :
-            await message.channel.send(ErrorMessages._playCommandUnreachableDomain)
+        if not url(linkToYouTubeVideo):
+            await message.channel.send(ErrorMessages._sendPlayCmdUnreachableDomain)
             return False
 
-        #* Todo: Ensure that the local file system has enough space for the video.
-        try :
-            ytObj = YouTube(linkToYouTubeVideo)
-            # Download video via pytube API.
-            audioStream = ytObj.streams.get_audio_only()
-            audioStream.download()
-            log.debug(f"{InfoMessages._playSuccessfulyDownloadedVideo} {linkToYouTubeVideo}")
-        except OSError as err:
-            log.error(f"{ErrorMessages._playFailedToDownloadVideoException} {err}")
-
+        #! Todo: Add logic to limit the number of downloaded videos to ten.
+        # Download the YouTube video.
+        pytubeObj = downloadYouTubeAudio(linkToYouTubeVideo)
+        if pytubeObj is None:
+            await message.channel.send(
+                ErrorMessages._sendPlayCmdFailedToDownloadAudio
+            )
             return False
+
+        #! Todo: Escape special characters in the file's name.
 
         # Acquire lock and await signal.
-        with self.writerCv :
-            while ( # Fall through if there are no active readers or writers.
-                    self.numReaders > 0 
-                    or self.numWriters > 0
-                ) :
-            
+        with self.writerCv:
+            while (  # Fall through if there are no active readers or writers.
+                self.numReaders > 0 and self.numWriters > 0
+            ):
+
                 self.writerCv.wait()
             self.numWriters = self.numWriters + 1
 
             # Enter mutual exclusion and add song to queue.
-            absPathToYtAudio = (
-                absPathGroovester + ytObj.title
+            self.listOfDownloadedSongsToPlay.append(pytubeObj)
+            log.debug(
+                "%s %s", DebugMessages._logPlayCmdAddingVideoToQueue, pytubeObj.absPathToFile
             )
-            self.listOfDownloadedSongsToPlay.append(absPathToYtAudio)
-            log.debug(f"{DebugMessages._playAddingVideoToQueue} {absPathToYtAudio}")
 
             self.numWriters = self.numWriters - 1
             # Signal any threads waiting to run.
-            with self.readerCv :
+            with self.readerCv:
                 self.readerCv.notify()
-            self.writerCv.notify() 
+            self.writerCv.notify()
 
+    #! Todo: I think it would be better to stream the song instead of download it to the filesystem.
+    async def speakInVoiceChannel(self, absPathToVideoToPlay: str):
+        """Function used to allow Groovester to stream audio to the voice channel."""
 
-    def playDownloadedSongViaDiscordAudio() :
-        with readerCv :
-            while ( # Fall through if there are no active readers or writers.
-                self.numReaders > 0 
-                or self.numWriters > 0 
-                or self.listOfDownloadedSongsToPlay.size() == 0
-            ) : # ! Todo: For now spin-lock, evenutally have bounded-buffer
-                readerCv.wait()
-            numReaders = numReaders + 1
+        # await self.lastChannelCommandWasEntered.send("Let's play some audio!")
+        # ffmpegKwargs = { # Optimized settings for ffmpeg for audio streaming, https://stackoverflow.com/questions/75493436/why-is-the-ffmpeg-process-in-discordpy-terminating-without-playing-anything
+        # #   'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
+        #   'options': '-vn -filter:a "volume=0.75"'
+        # }
+        #! Todo: Optimize settings for crisp audio streaming.
+        self.audioSource = discord.FFmpegOpusAudio(
+            executable="/usr/bin/ffmpeg", source=absPathToVideoToPlay
+        )
 
-            # Store absolute path to downloaded song to play
-            tempAbsPathToDownloadedVideoToPlay = ""
-            tempAbsPathToDownloadedVideoToPlay = self.listOfDownloadedSongsToPlay[0]
-            self.listOfDownloadedSongsToPlay = self.listOfDownloadedSongsToPlay[1:]
+        # Check that bot is in voice channel.
+        if not self.voiceClient.is_connected():
+            log.error(
+                ErrorMessages._logNotConnectedToVoiceChannel
+            )
+            return False
 
-            self.numReaders = self.numReaders - 1
-            with self.writerCv :
-                self.writerCv.notify()
+        # Check if Groovester is already playing a song.
+        if self.voiceClient.is_playing():
+            log.error(
+                ErrorMessages._logAlreadyPlayingAudio
+            )
+            return False
 
-            #! Todo: Check that bot is in voice channel. If not recoomned user issues !join command.
+        try:
+            log.debug(
+                "%s %s", DebugMessages._logAttemptingToPlayAudioSource, absPathToVideoToPlay
+            )
+            self.voiceClient.play(self.audioSource)
+            log.debug(
+                "%s %s", DebugMessages._logSuccessfullyPlayedAudioSource, absPathToVideoToPlay,
+            )
+        except discord.ClientException as err:
+            self.voiceClient.stop()
+            log.error("%s %s", ErrorMessages._exceptionTryingToPlayAudioSource, err)
+            return False
 
-            #! Todo: Begin playing song over the Discord voice channel.
+        return True
 
-            #! Todo: Delete the downloaded file after song ends.
-            if os.path.exists(tempAbsPathToDownloadedVideoToPlay) :
-                try :
-                    os.rm(tempAbsPathToDownloadedVideoToPlay)
-                except OSError as err :
-                    log.error(err) 
+    async def stopClientEvent(self, channel):
+        """Helper function, used to stop Groovester from streaming audio to the voice channel."""
 
-                    return False
+        if self.voiceClient is not None:
+            if not self.voiceClient.is_connected():
+                await channel.send(InfoMessages._sendStopCmdNotInVoiceChannel)
+                return False
+            if not self.voiceClient.is_playing():
+                await channel.send(InfoMessages._sendStopCmdNotPlayingAudio)
+                return False
+
+            self.voiceClient.stop()
+
+        else:
+            await channel.send(
+                InfoMessages._sendStopCmdConditionsNotMet
+            )
+            return False
 
         return True
