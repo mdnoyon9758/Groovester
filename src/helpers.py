@@ -9,28 +9,21 @@ from src.constants import ClientMessages, DebugMessages, ErrorMessages, InfoMess
 ABS_PATH_TO_TMP_GROOVESTER_DOWNLOADS = None
 log.getLogger(__name__)  # Set same logging parameters as client.py.
 
-fileSequence = 0
-
 
 #! Todo: Make class that can store URL and absolute file path on local file
 #!  system.
 def downloadYouTubeAudio(linkToYouTubeVideo: str):
     """Helper function used to download a YouTube video given a valid URL."""
 
-    global fileSequence
-    fileSequence = fileSequence + 1
-
     #!  Todo: Ensure that the local file system has enough space for the video.
     ytObj = YouTube(linkToYouTubeVideo)
-    audioStream = ytObj.streams.get_audio_only()  # Only download audio, saves as .mp4
+    audioStream = ytObj.streams.get_audio_only()  # Only download audio and save it as .mp4.
 
     # Download video via pytube API.
     try:
-        absPathToDownloadedVideo = audioStream.download(
-            filename=(str(fileSequence))
-        )
+        absPathToDownloadedVideo = audioStream.download()
     except OSError as err:
-        log.error("%s %s", ErrorMessages._playFailedToDownloadVideoException, err)
+        log.error("%s %s", ErrorMessages._exceptionPlayFailedToDownloadVideo, err)
         return None
     except Exception as err:
         log.error(err)
@@ -38,7 +31,7 @@ def downloadYouTubeAudio(linkToYouTubeVideo: str):
 
     if not os.path.exists(absPathToDownloadedVideo):
         return None
-    log.debug("%s %s", InfoMessages._playSuccessfulyDownloadedVideo, linkToYouTubeVideo)
+    log.debug("%s %s", InfoMessages._logPlaySuccessfulyDownloadedVideo, linkToYouTubeVideo)
 
     # Store key information relating to the video in a PyTube object.
     pytubeObj = PyTube(absPathToDownloadedVideo, linkToYouTubeVideo, ytObj)

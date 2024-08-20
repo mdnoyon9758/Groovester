@@ -37,8 +37,8 @@ def runPlaySongsInDiscordAudioThread():
 async def on_ready():
     """Prints message when Groovester successfully starts and starts helper threads."""
 
-    log.info("%s", InfoMessages._groovesterStartedSuccessfully)
-    print(InfoMessages._groovesterStartedSuccessfully)
+    log.info("%s", InfoMessages._logGroovesterStartedSuccessfully)
+    print(InfoMessages._logGroovesterStartedSuccessfully)
 
     # Start various helper threads.
     playSongsInDiscordAudioThread = Thread(
@@ -47,7 +47,8 @@ async def on_ready():
     try:
         playSongsInDiscordAudioThread.start()
     except Exception as err:
-        log.error(err)
+        log.error("%s %s", ErrorMessages._exceptionOnReadyChildThread, err)
+        #! Todo: Kill process when this exception is thrown.
 
     return True
 
@@ -110,7 +111,8 @@ if __name__ == "__main__":
 
     # Start the Groovester client thread.
     try:
-        log.debug("%s", DebugMessages._clientRunAttempt)
+        log.info("%s", InfoMessages._logNewGroovesterInstance)
+        log.debug("%s", DebugMessages._logClientRunAttempt)
         client.run(os.getenv("botToken"))
     except DiscordException as err:
-        log.error("%s %s", ErrorMessages._clientRunException, err)
+        log.error("%s %s", ErrorMessages._exceptionClientRun, err)

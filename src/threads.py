@@ -3,6 +3,7 @@ import logging as log
 from threading import Condition
 from time import sleep
 
+from src.constants import ClientMessages, DebugMessages, ErrorMessages, InfoMessages
 from src.Groovester import GroovesterEventHandler
 from src.helpers import downloadYouTubeAudio
 
@@ -106,42 +107,58 @@ async def playDownloadedSongViaDiscordAudio(handler: GroovesterEventHandler):
     Thread that is used to stream audio when Groovester is in a voice channel.
         If there is no song to play, it awaits a signal from client thread.
     """
-    log.info("playSongsInDiscordAudioThread has started!")
+    log.debug("%s", DebugMessages._logPlaySongsInDiscordAudioThreadStarted)
 
     queue = handler.listOfDownloadedSongsToPlay
 
     while True:
 
-        # Spin lock until various conditions are met.
         with handler.readerCv:
-            # Check that there are songs in the queue.
-            while len(queue) == 0:
-                log.debug("Giving up time slice, waiting for songs in queue.")
-                handler.readerCv.wait()
-            # Check if the Voice Cleint has been instantiated.
-            #! Todo: User can get past this check, then crash the program by issuing the !leave command.
-            while handler.voiceClient is None:
-                log.debug(
-                    "Giving up time slice, waiting for voice client to instantiate."
-                )
-                handler.readerCv.wait()
-            # Check if the Voice Client is connected to a Voice Channel.
-            while not handler.voiceClient.is_connected():
-                log.debug(
-                    "Giving up time slice, waiting for voice client to connect to a voice channel."
-                )
-                handler.readerCv.wait()
-            # Check if the Voice Client instance is already playing a song.
-            while handler.voiceClient.is_playing():
-                log.debug(
-                    "Giving up time slice, Groovester's voice client is already playing a song."
-                )
-                handler.readerCv.wait()
-            while (  # Fall through if there are no active readers or writers.
-                handler.numReaders > 0 or handler.numWriters > 0
-            ):
-                log.debug("Giving up time slice, there are active readers or writers.")
-                handler.readerCv.wait()
+
+            # Spin lock until various conditions are met.
+            while True:
+                
+                # Check that there are songs in the queue.
+                #! Todo: while true and replace whiles with if statements. Otherwise, checks can be by passed.
+                if len(queue) == 0:
+                    log.debug(DebugMessages._logQueueEmpty)
+                    handler.readerCv.wait()
+                    continue
+
+                # Check if the Voice Cleint has been instantiated.
+                #! Todo: User can get past this check, then crash the program by issuing the !leave command.
+                elif handler.voiceClient is None:
+                    log.debug(
+                        "%s", DebugMessages._logUninstantiatedVoiceClient
+                    )
+                    handler.readerCv.wait()
+                    continue
+
+                # Check if the Voice Client is connected to a Voice Channel.
+                elif not handler.voiceClient.is_connected():
+                    log.debug(
+                        "%s", DebugMessages._logInactiveVoiceClient
+                    )
+                    handler.readerCv.wait()
+                    continue 
+
+                # Check if the Voice Client instance is already playing a song.
+                elif handler.voiceClient.is_playing():
+                    log.debug(
+                        "%s", DebugMessages._logActiveVoiceClient
+                    )
+                    handler.readerCv.wait()
+                    continue
+
+                # Fall through if there are no active readers or writers.
+                elif (  
+                    handler.numReaders > 0 or handler.numWriters > 0
+                ):
+                    log.debug("%s", DebugMessages._logActiveReadersOrWriters)
+                    handler.readerCv.wait()
+                    continue
+                else: 
+                    break
 
             handler.numReaders = handler.numReaders + 1
 
@@ -155,19 +172,19 @@ async def playDownloadedSongViaDiscordAudio(handler: GroovesterEventHandler):
 
         # Play song through the Discord voice channel.
         await handler.speakInVoiceChannel(absPathToDownloadedVideoToPlay)
-
-        sleep(2)
+        sleep(1) #! Todo: Look into alternatives for this sleep function call. Allows child thread time to open file descriptor. Maybe signal writerCv from speakInVoiceChannel thread?
 
         # Delete the downloaded file after song ends.
         if os.path.exists(absPathToDownloadedVideoToPlay):
             try:
                 os.remove(absPathToDownloadedVideoToPlay)
                 log.debug(
-                    "Successfully deleted the following file: %s",
-                    absPathToDownloadedVideoToPlay,
+                    "%s %s", DebugMessages._logRemovedFileFromFileSystem, absPathToDownloadedVideoToPlay
                 )
             except OSError as err:
-                log.error(err)
+                log.error(
+                    "%s %s", ErrorMessages._exceptionUnableToRemoveFileFromFileSystem, err
+                )
                 return False
 
     return True

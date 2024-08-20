@@ -43,9 +43,7 @@ class GroovesterEventHandler:
                 voiceChannel = message.author.voice.channel
                 self.voiceClient = await voiceChannel.connect()
                 log.debug(
-                    "!join successfully connected to the voice channel: %s (ID: %s)",
-                    voiceChannel.name,
-                    voiceChannel.id,
+                    "%s %s", InfoMessages._logConnectedToVoiceChannel, voiceChannel.name
                 )
             except discord.ClientException as err:
                 log.error(err)
@@ -54,16 +52,15 @@ class GroovesterEventHandler:
                 log.error(err)
                 return False
         else:
-            log.error("!join failed, author is not in a voice channel.")
-            await message.channel.send(ErrorMessages._joinCommandNoActiveVoiceChannel)
+            log.error(ErrorMessages._logJoinCmdAuthorNotInVoiceChannel)
+            await message.channel.send(ErrorMessages._sendJoinCmdNoActiveVoiceChannel)
             return False
 
         with self.readerCv:
             self.readerCv.notify()
 
-        #! Todo: Send a list of useful commands to the text channel.
         await message.channel.send(
-            "!join successfully completed, here are some useful commands to get you started: "
+            InfoMessages._sendJoinCmdSuccessfulVoiceClientConnect
         )
 
         return True
@@ -79,9 +76,7 @@ class GroovesterEventHandler:
                     voiceChannel = message.author.voice.channel
                     self.voiceClient = await self.voiceClient.disconnect()
                     log.debug(
-                        "!leave successfully disconnected from the voice channel: %s (ID: %s)",
-                        voiceChannel.name,
-                        voiceChannel.id,
+                        "%s %s", InfoMessages._logDisconnectedFromVoiceChannel, voiceChannel.name
                     )
                 except discord.ClientException as err:
                     log.error(err)
@@ -90,12 +85,14 @@ class GroovesterEventHandler:
                     log.error(err)
                     return False
         else:
-            log.error("!leave failed, Groovester is not in a voice channel.")
-            await message.channel.send(ErrorMessages._leaveCommandNoActiveVoiceChannel)
+            log.error(ErrorMessages._logLeaveCmdNoActiveVoiceChannel)
+            await message.channel.send(ErrorMessages._sendLeaveCmdNoActiveVoiceChannel)
 
             return False
 
-        await message.channel.send("Bye, bye! :(")
+        await message.channel.send(
+            InfoMessages._sendLeaveCmdLeaveVoiceChannel
+        )
         #! Todo: print the number of songs still in queue.
 
         return True
@@ -112,17 +109,17 @@ class GroovesterEventHandler:
         if len(message.content) > 5 and linkToYouTubeVideo[5] == " ":
             linkToYouTubeVideo = message.content.split(" ")[1]
         else:
-            await message.channel.send(ErrorMessages._playCommandIncorrectParameters)
+            await message.channel.send(ErrorMessages._sendPlayCmdIncorrectParameters)
             return False
 
         # Check domain is what is expected.
         if not linkToYouTubeVideo.startswith("https://www.youtube.com/"):
-            await message.channel.send(ErrorMessages._playCommandIncorrectDomain)
+            await message.channel.send(ErrorMessages._sendPlayCmdIncorrectDomain)
             return False
 
         # Test if the Domain is reachable and valid. (Emphasis on Domain)
         if not url(linkToYouTubeVideo):
-            await message.channel.send(ErrorMessages._playCommandUnreachableDomain)
+            await message.channel.send(ErrorMessages._sendPlayCmdUnreachableDomain)
             return False
 
         #! Todo: Add logic to limit the number of downloaded videos to ten.
@@ -130,7 +127,7 @@ class GroovesterEventHandler:
         pytubeObj = downloadYouTubeAudio(linkToYouTubeVideo)
         if pytubeObj is None:
             await message.channel.send(
-                "Groovester failed to download the requested video!"
+                ErrorMessages._sendPlayCmdFailedToDownloadAudio
             )
             return False
 
@@ -148,7 +145,7 @@ class GroovesterEventHandler:
             # Enter mutual exclusion and add song to queue.
             self.listOfDownloadedSongsToPlay.append(pytubeObj)
             log.debug(
-                "%s %s", DebugMessages._playAddingVideoToQueue, pytubeObj.absPathToFile
+                "%s %s", DebugMessages._logPlayCmdAddingVideoToQueue, pytubeObj.absPathToFile
             )
 
             self.numWriters = self.numWriters - 1
@@ -168,35 +165,34 @@ class GroovesterEventHandler:
         # }
         #! Todo: Optimize settings for crisp audio streaming.
         self.audioSource = discord.FFmpegOpusAudio(
-            executable="/usr/bin/ffmpeg", source=absPathToVideoToPlay.strip()
+            executable="/usr/bin/ffmpeg", source=absPathToVideoToPlay
         )
 
         # Check that bot is in voice channel.
         if not self.voiceClient.is_connected():
             log.error(
-                "Groovester failed to play audio! "
-                + "Groovester has not connected to a voice channel yet!"
+                ErrorMessages._logNotConnectedToVoiceChannel
             )
             return False
 
         # Check if Groovester is already playing a song.
         if self.voiceClient.is_playing():
             log.error(
-                "Groovester failed to play audio! "
-                + "Groovester is already playing audio!"
+                ErrorMessages._logAlreadyPlayingAudio
             )
             return False
 
         try:
-            log.debug("Attempting to play audio source: %s", absPathToVideoToPlay)
+            log.debug(
+                "%s %s", DebugMessages._logAttemptingToPlayAudioSource, absPathToVideoToPlay
+            )
             self.voiceClient.play(self.audioSource)
             log.debug(
-                "Groovester successfully played an audio source: %s",
-                absPathToVideoToPlay,
+                "%s %s", DebugMessages._logSuccessfullyPlayedAudioSource, absPathToVideoToPlay,
             )
         except discord.ClientException as err:
             self.voiceClient.stop()
-            log.error(err)
+            log.error("%s %s", ErrorMessages._exceptionTryingToPlayAudioSource, err)
             return False
 
         return True
@@ -206,17 +202,17 @@ class GroovesterEventHandler:
 
         if self.voiceClient is not None:
             if not self.voiceClient.is_connected():
-                await channel.send("Groovester is not in a voice channel!")
+                await channel.send(InfoMessages._sendStopCmdNotInVoiceChannel)
                 return False
             if not self.voiceClient.is_playing():
-                await channel.send("Groovester is not playing audio!")
+                await channel.send(InfoMessages._sendStopCmdNotPlayingAudio)
                 return False
 
             self.voiceClient.stop()
 
         else:
             await channel.send(
-                "Groovester's Discord voice client instance hasn't been started!"
+                InfoMessages._sendStopCmdConditionsNotMet
             )
             return False
 
